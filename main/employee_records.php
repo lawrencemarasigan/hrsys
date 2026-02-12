@@ -34,6 +34,7 @@ function active($page) {
     .wrapper {
     height: 100vh;
     }
+    
     .sidebar {
         width: 260px;
         background: #ffffff;
@@ -111,12 +112,6 @@ function active($page) {
                            Edit
                         </a>
 
-                        <!-- DELETE -->
-                        <a href="delete_employee.php?id=<?= $row['id'] ?>" 
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this record?');">
-                           Delete
-                        </a>
                     </td>
                 </tr>
             <?php endwhile; ?>
@@ -135,19 +130,19 @@ function active($page) {
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-<script>
-$(document).ready(function () {
-    $('#employeeTable').DataTable({ pageLength: 15 });
-});
+    <script>
+        $(document).ready(function () {
+            $('#employeeTable').DataTable({ pageLength: 10 });
+        });
 
-function openViewWindow(id) {
-    window.open(
-        'view_employee.php?id=' + id,
-        'viewEmployee',
-        'width=600,height=600,scrollbars=yes,resizable=yes'
-    );
-}
-</script>
+        function openViewWindow(id) {
+            window.open(
+                'view_employee.php?id=' + id,
+                'viewEmployee',
+                'width=600,height=600,scrollbars=yes,resizable=yes'
+        );
+        }  
+    </script>
 
 </body>
 </html>
