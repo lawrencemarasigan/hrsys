@@ -32,7 +32,14 @@ $monthName = date('F Y', $firstDayOfMonth);
 
 body {
     margin: 0;
-    background: #e9f4fb;
+    font-family: Arial, sans-serif;
+    background: url("/assets/images/bgsannic.png") no-repeat center center fixed;
+    background-size: cover;
+}
+
+.overlay {
+    background: rgba(173, 216, 230, 0.85);
+    min-height: 100vh;
 }
 
 .wrapper {
@@ -254,8 +261,8 @@ th {
 </style>
 </head>
 <body>
-
-<div class="wrapper">
+<div class="overlay">
+    <div class="wrapper">
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -385,7 +392,7 @@ th {
                 </tr>
             </table>
         </div>
-
+    </div>
     </div>
 </div>
 <script>
