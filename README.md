@@ -1,6 +1,6 @@
-# SAN NICOLAS HR SYSTEM
+# HR SYSTEM
 
-The **San Nicolas HR System** is a web-based Human Resource Management System designed for municipal use.  
+The **HR System** is a web-based Human Resource Management System designed for municipal use.  
 It helps the HR department manage employee records, leave applications, employee performance, work calendars, and generate official documents.
 
 ## ✨ Features
