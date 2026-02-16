@@ -5,6 +5,14 @@ function active($page) {
     return $GLOBALS['current'] === $page ? 'active' : '';
 }
 
+$conn = new mysqli("localhost", "root", "", "hrsys_db");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$result = $conn->query("SELECT name, department, position, employee_status FROM employees");
+
 date_default_timezone_set('Asia/Manila');
 
 $todayDate = date('F d, Y');
@@ -53,7 +61,46 @@ background-size:cover;
 .wrapper{display:flex;height:100vh}
 
 /* Sidebar */
-.sidebar{width:260px;background:#fff;padding:15px}
+.sidebar{
+    width:260px;
+    height:100vh;
+    background:#e9e9e9;
+    padding-top:20px;
+    position:fixed;
+    left:0;
+    top:0;
+}
+
+.sidebar-logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:15px 20px;
+    margin-bottom:10px;
+}
+
+.sidebar-logo img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
+}
+
+.logo-text{
+    display:flex;
+    flex-direction:column;
+}
+
+.logo-title{
+    font-size:18px;
+    font-weight:bold;
+    color:#2c5cc5;
+}
+
+.logo-sub{
+    font-size:12px;
+    color:#666;
+}
+
 .menu-item{
 display:flex;
 gap:12px;
@@ -86,37 +133,71 @@ display:flex;
 gap:15px;
 }
 
-.calendar-box{
-background:#fff;
-padding:20px;
-border-radius:14px;
+.bottom-row{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
 }
 
-.calendar-controls a{
-padding:6px 12px;
-border:1px solid #ccc;
-border-radius:6px;
-text-decoration:none;
-margin-left:4px;
-color:#333;
+/* employee list */
+.employee-box{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    width:750px;
+}
+
+/* calendar */
+.calendar-box{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    width:420px;
+    margin-left:0; 
+}
+
+.employee-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+.employee-table th{
+    background:#0b5ed7;
+    color:#fff;
+    padding:8px;
+}
+
+.employee-table td{
+    padding:8px;
+    border-bottom:1px solid #ddd;
 }
 
 table{
-width:100%;
-border-collapse:collapse;
-margin-top:15px;
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    font-size:13px;   
 }
 
-th,td{
-border:1px solid #ddd;
-height:90px;
-padding:10px;
-text-align:right;
+th, td{
+    border:1px solid #ddd;
+    height:45px;    
+    padding:4px;      
+    text-align:right;
 }
 
-th{text-align:center;background:#f1f6fb}
+th{
+    text-align:center;
+    background:#f1f6fb;
+    font-size:12px;
+}
 
-.today{background:#fff7dc}
+.today{
+    background:#fff7dc;
+}
+
+
 </style>
 </head>
 
@@ -126,6 +207,16 @@ th{text-align:center;background:#f1f6fb}
 
 <!-- SIDEBAR -->
     <div class="sidebar">
+
+        <!-- Logo Section -->
+    <div class="sidebar-logo">
+        <img src="/assets/images/sannic.png" alt="LGU Logo">
+        <div class="logo-text">
+            <div class="logo-title">San Nicolas</div>
+            <div class="logo-sub">HR Management System</div>
+        </div>
+    </div>
+
         <a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
         <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
         <a href="form201.php" class="menu-item">🗂️ Form 201</a>
@@ -169,9 +260,32 @@ th{text-align:center;background:#f1f6fb}
         </div>
     </div>
 
+<div class="bottom-row">
+<!-- EMPLOYEE List -->
+<div class="employee-box">
+    <h2>EMPLOYEE LIST</h2>
+
+    <table class="employee-table">
+        <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Position</th>
+            <th>Status</th>
+        </tr>
+
+        <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['name']) ?></td>
+            <td><?= htmlspecialchars($row['department']) ?></td>
+            <td><?= htmlspecialchars($row['position']) ?></td>
+            <td><?= htmlspecialchars($row['employee_status']) ?></td>
+        </tr>
+        <?php endwhile; ?>
+
+    </table>
+</div>
 <!-- CALENDAR -->
 <div class="calendar-box">
-
     <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2>WORK CALENDAR</h2>
 
@@ -201,6 +315,8 @@ th{text-align:center;background:#f1f6fb}
 $i++;
 }
 ?>
+</div>
+
             </tr>
         </table>
     </div>
