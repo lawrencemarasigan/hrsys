@@ -51,19 +51,31 @@ if ($nextMonth == 13) {
 <title>LGU Dashboard</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif;}
-body{
-margin:0;
-background:url("/assets/images/bgsannic.png") no-repeat center fixed;
-background-size:cover;
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
-.overlay{background:rgba(173,216,230,.85);min-height:100vh;}
-.wrapper{display:flex;height:100vh}
+
+body{
+    margin:0;
+    background:url("/assets/images/bgsannic.png") no-repeat center fixed;
+    background-size:cover;
+}
+
+.overlay{
+    background:rgba(173,216,230,.85);
+    min-height:100vh;
+}
+
+/* wrapper */
+.wrapper{
+    display:flex;
+}
 
 /* Sidebar */
 .sidebar{
     width:260px;
-    height:100vh;
+    min-height:100vh;
     background:#e9e9e9;
     padding-top:20px;
     position:fixed;
@@ -71,6 +83,7 @@ background-size:cover;
     top:0;
 }
 
+/* LOGO */
 .sidebar-logo{
     display:flex;
     align-items:center;
@@ -82,7 +95,6 @@ background-size:cover;
 .sidebar-logo img{
     width:45px;
     height:45px;
-    object-fit:contain;
 }
 
 .logo-text{
@@ -102,60 +114,77 @@ background-size:cover;
 }
 
 .menu-item{
-display:flex;
-gap:12px;
-padding:14px;
-margin-bottom:10px;
-border-radius:10px;
-text-decoration:none;
-color:#0b5ed7;
+    display:flex;
+    gap:12px;
+    padding:14px;
+    margin:10px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#0b5ed7;
 }
+
 .menu-item.active,
-.menu-item:hover{background:#0b5ed7;color:#fff}
+.menu-item:hover{
+    background:#0b5ed7;
+    color:#fff;
+}
 
-/* Main */
-.main{flex:1;padding:25px}
+/* MAIN FIX — prevent overlap */
+.main{
+    margin-left:260px; /* IMPORTANT */
+    padding:25px;
+    width:calc(100% - 260px);
+}
 
-.topbar{display:flex;justify-content:space-between}
+/* topbar */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
+/* cards */
 .cards{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
-margin:20px 0;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin:20px 0;
 }
 
 .card{
-background:#fff;
-padding:20px;
-border-radius:14px;
-display:flex;
-gap:15px;
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    display:flex;
+    gap:15px;
 }
 
+/* bottom row FIX */
 .bottom-row{
     display:flex;
     gap:20px;
-    align-items:flex-start;
+    flex-wrap:wrap; /* IMPORTANT */
 }
 
-/* employee list */
+/* employee list FIX */
 .employee-box{
     background:#fff;
     padding:20px;
     border-radius:14px;
-    width:750px;
+    flex:2; /* responsive */
+    min-width:400px;
 }
 
-/* calendar */
+/* calendar FIX */
 .calendar-box{
     background:#fff;
     padding:20px;
     border-radius:14px;
-    width:420px;
-    margin-left:0; 
+    flex:1;
+    min-width:300px;
 }
 
+/* employee table */
 .employee-table{
     width:100%;
     border-collapse:collapse;
@@ -165,38 +194,40 @@ gap:15px;
 .employee-table th{
     background:#0b5ed7;
     color:#fff;
-    padding:8px;
+    padding:10px;
 }
 
 .employee-table td{
-    padding:8px;
+    padding:10px;
     border-bottom:1px solid #ddd;
 }
 
+/* calendar table */
 table{
     width:100%;
     border-collapse:collapse;
     margin-top:10px;
-    font-size:13px;   
 }
 
 th, td{
     border:1px solid #ddd;
-    height:45px;    
-    padding:4px;      
+    height:40px;
+    padding:5px;
     text-align:right;
 }
 
 th{
     text-align:center;
     background:#f1f6fb;
-    font-size:12px;
 }
 
 .today{
     background:#fff7dc;
 }
-
+.overlay{
+    background:rgba(173,216,230,.85);
+    min-height:100vh;
+}
 
 </style>
 </head>
@@ -221,7 +252,7 @@ th{
         <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
         <a href="form201.php" class="menu-item">🗂️ Form 201</a>
         <a href="requests.php" class="menu-item">📝 Requests</a>
-        <a href="leave_application.php" class="menu-item">📎 Leave</a>
+        <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
         <a href="performance.php" class="menu-item">📈 Performance</a>
         <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
     </div>

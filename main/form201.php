@@ -168,7 +168,7 @@ body{
     <div class="box-item">
         <div class="box-title">Oath of Office</div>
 
-        <img src="/hrsys/assets/images/sannic.png"
+        <img src="/assets/images/oath.jpg"
              class="box-image">
 
         <button class="use-btn">USE</button>
@@ -177,9 +177,9 @@ body{
 
 
     <div class="box-item">
-        <div class="box-title">Letter of CPA</div>
+        <div class="box-title">Availability of Funds</div>
 
-        <img src="/hrsys/assets/images/sannic.png"
+        <img src="/assets/images/sannic.png"
              class="box-image">
 
         <button class="use-btn">USE</button>
@@ -188,7 +188,7 @@ body{
     <div class="box-item">
         <div class="box-title">Assumption</div>
 
-        <img src="/hrsys/assets/images/sannic.png"
+        <img src="/assets/images/assumption.jpg"
              class="box-image">
 
         <button class="use-btn">USE</button>
@@ -196,7 +196,7 @@ body{
 
     <div class="box-item">
         <div class="box-title">Certificate</div>
-        <img src="/hrsys/assets/images/sannic.png"
+        <img src="/assets/images/sannic.png"
              class="box-image">
 
         <button class="use-btn">USE</button>
@@ -205,7 +205,16 @@ body{
     <div class="box-item">
         <div class="box-title">CS-Form No. 33-A</div>
 
-        <img src="/hrsys/assets/images/sannic.png"
+        <img src="/assets/images/csform.jpg"
+             class="box-image">
+
+        <button class="use-btn">USE</button>
+    </div>
+
+    <div class="box-item">
+        <div class="box-title">Appointment</div>
+
+        <img src="/assets/images/appointment.jpg"
              class="box-image">
 
         <button class="use-btn">USE</button>
