@@ -1,33 +1,60 @@
 <?php
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
+
+if ($conn->connect_error) {
+    die("Connection failed");
+}
+
+if(!isset($_GET['id'])) {
+    die("Invalid request");
+}
+
 $id = $_GET['id'];
 
-$result = $conn->query("SELECT * FROM employees WHERE id=$id");
-$emp = $result->fetch_assoc();
+$result = $conn->query("SELECT * FROM employees WHERE id = '$id'");
+
+if($result->num_rows == 0) {
+    die("Employee not found");
+}
+
+$row = $result->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
-<title>Print Employee</title>
-<style>
-body { font-family: Arial; padding: 30px; }
-.print-box { border: 1px solid #000; padding: 20px; }
-</style>
+    <title>Print Employee</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 40px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .info {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+        .info p {
+            margin: 8px 0;
+        }
+    </style>
 </head>
 <body onload="window.print()">
 
-<div class="print-box">
-    <h2>Employee Information</h2>
-    <p><b>Name:</b> <?= $emp['name'] ?></p>
-    <p><b>Department:</b> <?= $emp['department'] ?></p>
-    <p><b>Position:</b> <?= $emp['position'] ?></p>
-    <p><b>Hired Date:</b> <?= $emp['hired_at'] ?></p>
-    <p><b>Civil Status:</b> <?= $emp['civil_status'] ?></p>
-    <p><b>PhilHealth:</b> <?= $emp['philhealth'] ?></p>
-    <p><b>SSS:</b> <?= $emp['sss'] ?></p>
-    <p><b>GSIS:</b> <?= $emp['gsis'] ?></p>
-    <p><b>TIN:</b> <?= $emp['tin'] ?></p>
-    <p><b>PAG-IBIG:</b> <?= $emp['pagibig'] ?></p>
+<h2>Employee Information</h2>
+
+<div class="info">
+    <p><strong>Name:</strong> <?php echo $row['name']; ?></p>
+    <p><strong>Department:</strong> <?php echo $row['department']; ?></p>
+    <p><strong>Position:</strong> <?php echo $row['position']; ?></p>
+    <p><strong>Civil Status:</strong> <?php echo $row['civil_status']; ?></p>
+    <p><strong>PhilHealth:</strong> <?php echo $row['philhealth']; ?></p>
+    <p><strong>SSS:</strong> <?php echo $row['sss']; ?></p>
+    <p><strong>GSIS:</strong> <?php echo $row['gsis']; ?></p>
+    <p><strong>TIN:</strong> <?php echo $row['tin']; ?></p>
+    <p><strong>Pag-IBIG:</strong> <?php echo $row['pagibig']; ?></p>
 </div>
 
 </body>

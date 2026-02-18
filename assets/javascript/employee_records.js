@@ -4,11 +4,9 @@ $(document).ready(function () {
 
 let currentEmployeeId = null;
 
-
 function showViewEmployee(id)
 {
     currentEmployeeId = id;
-
     $.ajax({
         url: 'get_employee.php',
         method: 'GET',
@@ -27,9 +25,7 @@ function showViewEmployee(id)
                 $("#view_gsis").val(data.gsis);
                 $("#view_tin").val(data.tin);
                 $("#view_pagibig").val(data.pagibig);
-
                 $("#file_employee_id").val(data.id);
-
                 $("#viewEmployeePanel").css("display", "flex");
             }
         }
@@ -53,9 +49,7 @@ function showEditEmployee()
         success: function(data)
         {
             console.log(data);
-
             $("#edit_id").val(data.id);
-
             $("#edit_name").val(data.name);
             $("#edit_department").val(data.department);
             $("#edit_position").val(data.position);
@@ -65,19 +59,15 @@ function showEditEmployee()
             $("#edit_gsis").val(data.gsis);
             $("#edit_tin").val(data.tin);
             $("#edit_pagibig").val(data.pagibig);
-
             $("#editEmployeePanel").css("display", "flex");
         }
     });
 }
 
-
 function updateEmployee()
 {
     var id = $("#edit_id").val();
-
     console.log("ID:", id);
-
     $.ajax({
         url: "edit_employee.php",
         type: "POST",
@@ -114,7 +104,6 @@ function updateEmployee()
     });
 }
 
-
 function deleteEmployee()
 {
     if(currentEmployeeId == null)
@@ -130,36 +119,36 @@ function deleteEmployee()
     }
 }
 
+function printEmployee(id)
+{
+    window.open("print_employee.php?id=" + id, "_blank");
+}
+
 
 function hideViewEmployee()
 {
     $("#viewEmployeePanel").hide();
 }
 
-
 function showAddEmployeeForm()
 {
     $("#addEmployeePanel").css("display", "flex");
 }
-
 
 function hideAddEmployeeForm()
 {
     $("#addEmployeePanel").hide();
 }
 
-
 function showAddFilePanel()
 {
     $("#addFilePanel").css("display", "flex");
 }
 
-
 function hideAddFilePanel()
 {
     $("#addFilePanel").hide();
 }
-
 
 function hideEditEmployee()
 {

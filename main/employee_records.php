@@ -255,9 +255,8 @@ body {
             View
         </button>
 
-    <button class="btn btn-sm btn-print">
-        Print
-    </button>
+        <button onclick="printEmployee(<?php echo $row['id']; ?>)">Print</button>
+
 </td>
 </tr>
 
