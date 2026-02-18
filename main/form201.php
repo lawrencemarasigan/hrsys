@@ -171,7 +171,7 @@ body{
         <img src="/assets/images/oath.jpg"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button onclick="window.open('oathform.php', '_blank')">USE</button>
     </div>
 
 
@@ -208,7 +208,7 @@ body{
         <img src="/assets/images/csform.jpg"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button onclick="window.open('csform.php', '_blank')">USE</button>
     </div>
 
     <div class="box-item">
@@ -223,6 +223,10 @@ body{
 </div>
 
 </div>
-
+<script>
+function openForm() {
+    window.open("csform.php", "_blank");
+}
+</script>
 </body>
 </html>
