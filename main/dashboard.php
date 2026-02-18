@@ -10,14 +10,46 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$result = $conn->query("SELECT name, department, position, employee_status FROM employees");
+/* ===============================
+   EMPLOYEE FILTER + LIMIT 10
+=================================*/
+
+$selectedDept = isset($_GET['department']) ? $_GET['department'] : '';
+
+// Get department list
+$deptQuery = $conn->query("SELECT DISTINCT department FROM employees");
+
+// Employee query
+$sql = "SELECT name, department, position, employee_status FROM employees";
+
+if (!empty($selectedDept)) {
+    $sql .= " WHERE department = ?";
+}
+
+$sql .= " LIMIT 10";
+
+$stmt = $conn->prepare($sql);
+
+if (!empty($selectedDept)) {
+    $stmt->bind_param("s", $selectedDept);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+/* ===============================
+   DATE & TIME
+=================================*/
 
 date_default_timezone_set('Asia/Manila');
 
 $todayDate = date('F d, Y');
 $todayTime = date('h:i A');
 
-/* ===== DYNAMIC CALENDAR ===== */
+/* ===============================
+   DYNAMIC CALENDAR
+=================================*/
+
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
 $year  = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
@@ -26,7 +58,6 @@ $daysInMonth = date('t', $firstDayOfMonth);
 $startDay = date('w', $firstDayOfMonth);
 $monthName = date('F Y', $firstDayOfMonth);
 
-/* Navigation */
 $prevMonth = $month - 1;
 $prevYear = $year;
 $nextMonth = $month + 1;
@@ -55,40 +86,120 @@ body{
     background:url("/assets/images/bgsannic.png") no-repeat center fixed;
     background-size:cover;
 }
-.overlay{background:rgba(173,216,230,.85);min-height:100vh;}
-.wrapper{display:flex;}
+.overlay{
+    background:rgba(173,216,230,.85);
+    min-height:100vh;
+}
+.wrapper{
+    display:flex;
+}
 .sidebar{
-    width:260px;min-height:100vh;background:#e9e9e9;
-    padding-top:20px;position:fixed;left:0;top:0;
+    width:260px;
+    min-height:100vh;
+    background:#e9e9e9;
+    padding-top:20px;
+    position:fixed;
+    left:0;top:0;
 }
-.sidebar-logo{display:flex;gap:12px;padding:15px 20px;}
-.sidebar-logo img{width:45px;height:45px;}
-.logo-title{font-weight:bold;color:#2c5cc5;}
+.sidebar-logo{
+    display:flex;
+    gap:12px;
+    padding:15px 20px;
+    align-items:center;
+}
+.sidebar-logo img{
+    width:45px;
+    height:45px;
+}
+.logo-title{
+    font-weight:bold;
+    color:#2c5cc5;
+}
 .menu-item{
-    display:flex;gap:12px;padding:14px;margin:10px;
-    border-radius:10px;text-decoration:none;color:#0b5ed7;
+    display:flex;
+    gap:12px;
+    padding:14px;
+    margin:10px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#0b5ed7;
 }
-.menu-item.active,.menu-item:hover{background:#0b5ed7;color:#fff;}
-.main{margin-left:260px;padding:25px;width:calc(100% - 260px);}
-.topbar{display:flex;justify-content:space-between;}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
-.card{background:#fff;padding:20px;border-radius:14px;display:flex;gap:15px;}
-.bottom-row{display:flex;gap:20px;flex-wrap:wrap;}
+.menu-item.active,.menu-item:hover{
+    background:#0b5ed7;
+    color:#fff;
+}
+.main{
+    margin-left:260px;
+    padding:25px;
+    width:calc(100% - 260px);
+}
+.topbar{
+    display:flex;
+    justify-content:space-between;
+}
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin:20px 0;
+}
+.card{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    display:flex;gap:15px;
+}
+.bottom-row{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
 .employee-box,.calendar-box{
-    background:#fff;padding:20px;border-radius:14px;
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
 }
-.employee-box{flex:2;min-width:400px;}
-.calendar-box{flex:1;min-width:300px;}
-.employee-table{width:100%;border-collapse:collapse;font-size:13px;}
-.employee-table th{background:#0b5ed7;color:#fff;padding:10px;}
-.employee-table td{padding:10px;border-bottom:1px solid #ddd;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{border:1px solid #ddd;height:40px;padding:5px;text-align:right;}
-th{text-align:center;background:#f1f6fb;}
-.today{background:#fff7dc;}
-
-/* CALENDAR BUTTONS */
-.calendar-controls{display:flex;gap:8px;}
+.employee-box{
+    flex:2;
+    min-width:400px;
+}
+.calendar-box{
+    flex:1;
+    min-width:300px;
+}
+.employee-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;}
+.employee-table th{
+    background:#0b5ed7;
+    color:#fff;
+    padding:10px;
+}
+.employee-table td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+table{
+    width:100%;
+    border-collapse:collapse
+    ;margin-top:10px;
+}
+th,td{
+    border:1px solid #ddd;
+    height:40px;padding:5px;
+    text-align:right;
+}
+th{
+    text-align:center;
+    background:#f1f6fb;
+}
+.today{
+    background:#fff7dc;
+}
+.calendar-controls{
+    display:flex;gap:8px;
+}
 .cal-btn{
     text-decoration:none;
     padding:6px 10px;
@@ -97,7 +208,12 @@ th{text-align:center;background:#f1f6fb;}
     border-radius:6px;
     font-size:13px;
 }
-.cal-btn:hover{background:#084298;}
+.cal-btn:hover{
+    background:#084298;
+}
+select{
+    padding:6px;
+    }
 </style>
 </head>
 
@@ -147,10 +263,30 @@ th{text-align:center;background:#f1f6fb;}
 <!-- EMPLOYEE LIST -->
 <div class="employee-box">
 <h2>EMPLOYEE LIST</h2>
+
+<form method="GET" style="margin-bottom:10px;">
+    <input type="hidden" name="month" value="<?= $month ?>">
+    <input type="hidden" name="year" value="<?= $year ?>">
+
+    <select name="department" onchange="this.form.submit()">
+        <option value="">All Departments</option>
+        <?php while($dept = $deptQuery->fetch_assoc()): ?>
+            <option value="<?= htmlspecialchars($dept['department']) ?>"
+                <?= ($selectedDept == $dept['department']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($dept['department']) ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+</form>
+
 <table class="employee-table">
 <tr>
-    <th>Name</th><th>Department</th><th>Position</th><th>Status</th>
+    <th>Name</th>
+    <th>Department</th>
+    <th>Position</th>
+    <th>Status</th>
 </tr>
+
 <?php while($row = $result->fetch_assoc()): ?>
 <tr>
     <td><?= htmlspecialchars($row['name']) ?></td>
@@ -159,6 +295,7 @@ th{text-align:center;background:#f1f6fb;}
     <td><?= htmlspecialchars($row['employee_status']) ?></td>
 </tr>
 <?php endwhile; ?>
+
 </table>
 </div>
 
@@ -168,8 +305,8 @@ th{text-align:center;background:#f1f6fb;}
     <h2>WORK CALENDAR</h2>
     <div class="calendar-controls">
         <a class="cal-btn" href="?month=<?= date('n') ?>&year=<?= date('Y') ?>">Today</a>
-        <a class="cal-btn" href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>">◀</a>
-        <a class="cal-btn" href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>">▶</a>
+        <a class="cal-btn" href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>&department=<?= urlencode($selectedDept) ?>">◀</a>
+        <a class="cal-btn" href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>&department=<?= urlencode($selectedDept) ?>">▶</a>
     </div>
 </div>
 

@@ -255,7 +255,10 @@ body {
             View
         </button>
 
-        <button onclick="printEmployee(<?php echo $row['id']; ?>)">Print</button>
+        <button class="btn btn-sm btn-print"
+            onclick="printEmployee(<?= $row['id']; ?>)">
+            Print
+        </button>
 
 </td>
 </tr>
