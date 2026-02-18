@@ -38,20 +38,27 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 /* ===============================
-   DATE & TIME
+   PENDING REQUESTS / LEAVE
 =================================*/
 
-date_default_timezone_set('Asia/Manila');
+$pendingRequestQuery = $conn->query("SELECT COUNT(*) AS total_requests FROM requests WHERE status='Pending'");
+$pendingRequest = $pendingRequestQuery ? $pendingRequestQuery->fetch_assoc()['total_requests'] : 0;
 
-$todayDate = date('F d, Y');
-$todayTime = date('h:i A');
+$pendingLeaveQuery = $conn->query("SELECT COUNT(*) AS total_leave FROM leave_application WHERE status='Pending'");
+$pendingLeave = $pendingLeaveQuery ? $pendingLeaveQuery->fetch_assoc()['total_leave'] : 0;
 
 /* ===============================
    DYNAMIC CALENDAR
 =================================*/
 
+date_default_timezone_set('Asia/Manila');
+
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
 $year  = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+
+$todayDay   = date('j');
+$todayMonth = date('n');
+$todayYear  = date('Y');
 
 $firstDayOfMonth = mktime(0,0,0,$month,1,$year);
 $daysInMonth = date('t', $firstDayOfMonth);
@@ -63,14 +70,8 @@ $prevYear = $year;
 $nextMonth = $month + 1;
 $nextYear = $year;
 
-if ($prevMonth == 0) {
-    $prevMonth = 12;
-    $prevYear--;
-}
-if ($nextMonth == 13) {
-    $nextMonth = 1;
-    $nextYear++;
-}
+if ($prevMonth == 0) { $prevMonth = 12; $prevYear--; }
+if ($nextMonth == 13) { $nextMonth = 1; $nextYear++; }
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +79,6 @@ if ($nextMonth == 13) {
 <head>
 <meta charset="UTF-8">
 <title>LGU Dashboard</title>
-
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
@@ -147,7 +147,18 @@ body{
     background:#fff;
     padding:20px;
     border-radius:14px;
-    display:flex;gap:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
+    box-shadow:0 3px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor:pointer;
+}
+.card:hover{
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
+    transform: translateY(-3px);
+    border-left:4px solid #0b5ed7;
 }
 .bottom-row{
     display:flex;
@@ -170,7 +181,8 @@ body{
 .employee-table{
     width:100%;
     border-collapse:collapse;
-    font-size:13px;}
+    font-size:13px;
+}
 .employee-table th{
     background:#0b5ed7;
     color:#fff;
@@ -182,8 +194,8 @@ body{
 }
 table{
     width:100%;
-    border-collapse:collapse
-    ;margin-top:10px;
+    border-collapse:collapse;
+    margin-top:10px;
 }
 th,td{
     border:1px solid #ddd;
@@ -194,8 +206,17 @@ th{
     text-align:center;
     background:#f1f6fb;
 }
-.today{
-    background:#fff7dc;
+/* Small circular highlight for today */
+.today-date{
+    display:inline-block;
+    width:26px;
+    height:26px;
+    line-height:26px;
+    background:#0b5ed7;
+    color:#fff;
+    border-radius:50%;
+    font-weight:bold;
+    text-align:center;
 }
 .calendar-controls{
     display:flex;gap:8px;
@@ -213,7 +234,7 @@ th{
 }
 select{
     padding:6px;
-    }
+}
 </style>
 </head>
 
@@ -248,13 +269,15 @@ select{
     <strong>Admin</strong>
 </div>
 
+<!-- PENDING CARDS -->
 <div class="cards">
-    <div class="card">
-        <div>🕘</div>
-        <div>
-            <h3><?= $todayDate ?></h3>
-            <strong><?= $todayTime ?></strong>
-        </div>
+    <div class="card" onclick="window.location.href='requests.php'">
+        <div>📝 Pending Request</div>
+        <div><?= $pendingRequest ?></div>
+    </div>
+    <div class="card" onclick="window.location.href='leave_application.php'">
+        <div>📎 Pending Leave</div>
+        <div><?= $pendingLeave ?></div>
     </div>
 </div>
 
@@ -304,7 +327,7 @@ select{
 <div style="display:flex;justify-content:space-between;align-items:center;">
     <h2>WORK CALENDAR</h2>
     <div class="calendar-controls">
-        <a class="cal-btn" href="?month=<?= date('n') ?>&year=<?= date('Y') ?>">Today</a>
+        <a class="cal-btn" href="?month=<?= $todayMonth ?>&year=<?= $todayYear ?>&department=<?= urlencode($selectedDept) ?>">Today</a>
         <a class="cal-btn" href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>&department=<?= urlencode($selectedDept) ?>">◀</a>
         <a class="cal-btn" href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>&department=<?= urlencode($selectedDept) ?>">▶</a>
     </div>
@@ -319,20 +342,15 @@ select{
 </tr>
 <tr>
 <?php
-for ($i = 0; $i < $startDay; $i++) {
-    echo "<td></td>";
-}
+for ($i = 0; $i < $startDay; $i++) echo "<td></td>";
 
 for ($day = 1; $day <= $daysInMonth; $day++) {
-
-    if (($startDay + $day - 1) % 7 == 0 && $day != 1) {
-        echo "</tr><tr>";
+    if (($startDay + $day - 1) % 7 == 0 && $day != 1) echo "</tr><tr>";
+    if ($day == $todayDay && $month == $todayMonth && $year == $todayYear) {
+        echo "<td><span class='today-date'>$day</span></td>";
+    } else {
+        echo "<td>$day</td>";
     }
-
-    $class = ($day == date('j') && $month == date('n') && $year == date('Y'))
-        ? "today" : "";
-
-    echo "<td class='$class'>$day</td>";
 }
 echo "</tr>";
 ?>
