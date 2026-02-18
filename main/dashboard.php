@@ -6,7 +6,6 @@ function active($page) {
 }
 
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
-
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -18,7 +17,7 @@ date_default_timezone_set('Asia/Manila');
 $todayDate = date('F d, Y');
 $todayTime = date('h:i A');
 
-/* Dynamic calendar */
+/* ===== DYNAMIC CALENDAR ===== */
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
 $year  = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
@@ -37,7 +36,6 @@ if ($prevMonth == 0) {
     $prevMonth = 12;
     $prevYear--;
 }
-
 if ($nextMonth == 13) {
     $nextMonth = 1;
     $nextYear++;
@@ -51,309 +49,161 @@ if ($nextMonth == 13) {
 <title>LGU Dashboard</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
+*{box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
     margin:0;
     background:url("/assets/images/bgsannic.png") no-repeat center fixed;
     background-size:cover;
 }
-
-.overlay{
-    background:rgba(173,216,230,.85);
-    min-height:100vh;
-}
-
-/* wrapper */
-.wrapper{
-    display:flex;
-}
-
-/* Sidebar */
+.overlay{background:rgba(173,216,230,.85);min-height:100vh;}
+.wrapper{display:flex;}
 .sidebar{
-    width:260px;
-    min-height:100vh;
-    background:#e9e9e9;
-    padding-top:20px;
-    position:fixed;
-    left:0;
-    top:0;
+    width:260px;min-height:100vh;background:#e9e9e9;
+    padding-top:20px;position:fixed;left:0;top:0;
 }
-
-/* LOGO */
-.sidebar-logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:15px 20px;
-    margin-bottom:10px;
-}
-
-.sidebar-logo img{
-    width:45px;
-    height:45px;
-}
-
-.logo-text{
-    display:flex;
-    flex-direction:column;
-}
-
-.logo-title{
-    font-size:18px;
-    font-weight:bold;
-    color:#2c5cc5;
-}
-
-.logo-sub{
-    font-size:12px;
-    color:#666;
-}
-
+.sidebar-logo{display:flex;gap:12px;padding:15px 20px;}
+.sidebar-logo img{width:45px;height:45px;}
+.logo-title{font-weight:bold;color:#2c5cc5;}
 .menu-item{
-    display:flex;
-    gap:12px;
-    padding:14px;
-    margin:10px;
-    border-radius:10px;
-    text-decoration:none;
-    color:#0b5ed7;
+    display:flex;gap:12px;padding:14px;margin:10px;
+    border-radius:10px;text-decoration:none;color:#0b5ed7;
 }
+.menu-item.active,.menu-item:hover{background:#0b5ed7;color:#fff;}
+.main{margin-left:260px;padding:25px;width:calc(100% - 260px);}
+.topbar{display:flex;justify-content:space-between;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+.card{background:#fff;padding:20px;border-radius:14px;display:flex;gap:15px;}
+.bottom-row{display:flex;gap:20px;flex-wrap:wrap;}
+.employee-box,.calendar-box{
+    background:#fff;padding:20px;border-radius:14px;
+}
+.employee-box{flex:2;min-width:400px;}
+.calendar-box{flex:1;min-width:300px;}
+.employee-table{width:100%;border-collapse:collapse;font-size:13px;}
+.employee-table th{background:#0b5ed7;color:#fff;padding:10px;}
+.employee-table td{padding:10px;border-bottom:1px solid #ddd;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid #ddd;height:40px;padding:5px;text-align:right;}
+th{text-align:center;background:#f1f6fb;}
+.today{background:#fff7dc;}
 
-.menu-item.active,
-.menu-item:hover{
+/* CALENDAR BUTTONS */
+.calendar-controls{display:flex;gap:8px;}
+.cal-btn{
+    text-decoration:none;
+    padding:6px 10px;
     background:#0b5ed7;
     color:#fff;
-}
-
-/* MAIN FIX — prevent overlap */
-.main{
-    margin-left:260px; /* IMPORTANT */
-    padding:25px;
-    width:calc(100% - 260px);
-}
-
-/* topbar */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-/* cards */
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-    margin:20px 0;
-}
-
-.card{
-    background:#fff;
-    padding:20px;
-    border-radius:14px;
-    display:flex;
-    gap:15px;
-}
-
-/* bottom row FIX */
-.bottom-row{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap; /* IMPORTANT */
-}
-
-/* employee list FIX */
-.employee-box{
-    background:#fff;
-    padding:20px;
-    border-radius:14px;
-    flex:2; /* responsive */
-    min-width:400px;
-}
-
-/* calendar FIX */
-.calendar-box{
-    background:#fff;
-    padding:20px;
-    border-radius:14px;
-    flex:1;
-    min-width:300px;
-}
-
-/* employee table */
-.employee-table{
-    width:100%;
-    border-collapse:collapse;
+    border-radius:6px;
     font-size:13px;
 }
-
-.employee-table th{
-    background:#0b5ed7;
-    color:#fff;
-    padding:10px;
-}
-
-.employee-table td{
-    padding:10px;
-    border-bottom:1px solid #ddd;
-}
-
-/* calendar table */
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-}
-
-th, td{
-    border:1px solid #ddd;
-    height:40px;
-    padding:5px;
-    text-align:right;
-}
-
-th{
-    text-align:center;
-    background:#f1f6fb;
-}
-
-.today{
-    background:#fff7dc;
-}
-.overlay{
-    background:rgba(173,216,230,.85);
-    min-height:100vh;
-}
-
+.cal-btn:hover{background:#084298;}
 </style>
 </head>
 
 <body>
 <div class="overlay">
-    <div class="wrapper">
+<div class="wrapper">
 
 <!-- SIDEBAR -->
-    <div class="sidebar">
-
-        <!-- Logo Section -->
+<div class="sidebar">
     <div class="sidebar-logo">
-        <img src="/assets/images/sannic.png" alt="LGU Logo">
-        <div class="logo-text">
+        <img src="/assets/images/sannic.png">
+        <div>
             <div class="logo-title">San Nicolas</div>
-            <div class="logo-sub">HR Management System</div>
+            <div style="font-size:12px;">HR Management System</div>
         </div>
     </div>
 
-        <a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
-        <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-        <a href="form201.php" class="menu-item">🗂️ Form 201</a>
-        <a href="requests.php" class="menu-item">📝 Requests</a>
-        <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-        <a href="performance.php" class="menu-item">📈 Performance</a>
-        <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
-    </div>
+    <a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
+    <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
+    <a href="form201.php" class="menu-item">🗂️ Form 201</a>
+    <a href="requests.php" class="menu-item">📝 Requests</a>
+    <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
+    <a href="performance.php" class="menu-item">📈 Performance</a>
+    <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
+</div>
 
 <!-- MAIN -->
-    <div class="main">
-        <div class="topbar">
-        <h2>DASHBOARD</h2>
-        <strong>Admin</strong>
-    </div>
+<div class="main">
 
-<!-- CARDS -->
-    <div class="cards">
-        <div class="card">
-            <div>🕘</div>
-            <div>
+<div class="topbar">
+    <h2>DASHBOARD</h2>
+    <strong>Admin</strong>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <div>🕘</div>
+        <div>
             <h3><?= $todayDate ?></h3>
             <strong><?= $todayTime ?></strong>
         </div>
     </div>
-
-    <div class="card">
-        <div>👥</div>
-            <div>
-            <h3>0</h3>
-            <strong>Leave Request</strong>
-        </div>
-    </div>
-
-    <div class="card">
-        <div>📊</div>
-            <div>
-            <h3>Employee</h3>
-            <strong>Performance</strong>
-        </div>
-        </div>
-    </div>
+</div>
 
 <div class="bottom-row">
-<!-- EMPLOYEE List -->
+
+<!-- EMPLOYEE LIST -->
 <div class="employee-box">
-    <h2>EMPLOYEE LIST</h2>
-
-    <table class="employee-table">
-        <tr>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Position</th>
-            <th>Status</th>
-        </tr>
-
-        <?php while($row = $result->fetch_assoc()): ?>
-        <tr>
-            <td><?= htmlspecialchars($row['name']) ?></td>
-            <td><?= htmlspecialchars($row['department']) ?></td>
-            <td><?= htmlspecialchars($row['position']) ?></td>
-            <td><?= htmlspecialchars($row['employee_status']) ?></td>
-        </tr>
-        <?php endwhile; ?>
-
-    </table>
+<h2>EMPLOYEE LIST</h2>
+<table class="employee-table">
+<tr>
+    <th>Name</th><th>Department</th><th>Position</th><th>Status</th>
+</tr>
+<?php while($row = $result->fetch_assoc()): ?>
+<tr>
+    <td><?= htmlspecialchars($row['name']) ?></td>
+    <td><?= htmlspecialchars($row['department']) ?></td>
+    <td><?= htmlspecialchars($row['position']) ?></td>
+    <td><?= htmlspecialchars($row['employee_status']) ?></td>
+</tr>
+<?php endwhile; ?>
+</table>
 </div>
+
 <!-- CALENDAR -->
 <div class="calendar-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2>WORK CALENDAR</h2>
-
+<div style="display:flex;justify-content:space-between;align-items:center;">
+    <h2>WORK CALENDAR</h2>
     <div class="calendar-controls">
-        <a href="?month=<?= date('n') ?>&year=<?= date('Y') ?>">Today</a>
-        <a href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>">&lt;</a>
-        <a href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>">&gt;</a>
+        <a class="cal-btn" href="?month=<?= date('n') ?>&year=<?= date('Y') ?>">Today</a>
+        <a class="cal-btn" href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>">◀</a>
+        <a class="cal-btn" href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>">▶</a>
     </div>
 </div>
 
 <h3 style="color:#0d6efd"><?= $monthName ?></h3>
 
 <table>
-    <tr>
-        <th>Sun</th><th>Mon</th><th>Tue</th>
-        <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-    </tr>
+<tr>
+    <th>Sun</th><th>Mon</th><th>Tue</th>
+    <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+</tr>
 <tr>
 <?php
-    for ($i=0; $i<$startDay; $i++) echo "<td></td>";
-        $day = 1;
-            while ($day <= $daysInMonth) {
-            if ($i % 7 == 0) echo "</tr><tr>";
-            $class = ($day == date('j') && $month == date('n') && $year == date('Y')) ? "today" : "";
-        echo "<td class='$class'>$day</td>";
-    $day++;
-$i++;
+for ($i = 0; $i < $startDay; $i++) {
+    echo "<td></td>";
 }
+
+for ($day = 1; $day <= $daysInMonth; $day++) {
+
+    if (($startDay + $day - 1) % 7 == 0 && $day != 1) {
+        echo "</tr><tr>";
+    }
+
+    $class = ($day == date('j') && $month == date('n') && $year == date('Y'))
+        ? "today" : "";
+
+    echo "<td class='$class'>$day</td>";
+}
+echo "</tr>";
 ?>
+</table>
 </div>
 
-            </tr>
-        </table>
-    </div>
-<script src="/assets/javascript/dashboard.js"></script>
-                </div>
-            </div>
-        </div>
-    </body>
+</div>
+</div>
+</div>
+</body>
 </html>
