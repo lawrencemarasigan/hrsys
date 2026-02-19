@@ -60,14 +60,14 @@ button:hover{
 
     <!-- LEFT SIDE: YOUR ACTUAL PDF -->
     <div class="pdf-viewer">
-        <iframe src="/assets/forms/csform.pdf" width="100%" height="100%"></iframe>
+        <iframe src="../../assets/forms/csform.pdf" width="100%" height="100%"></iframe>
     </div>
 
     <!-- RIGHT SIDE: EDIT PANEL -->
     <div class="edit-panel">
         <h3>Edit Form Details</h3>
 
-        <form method="POST" action="csform_print.php" target="_blank">
+        <form method="POST" action="../print/csform_print.php" target="_blank">
 
     <label>Date of Assumption</label>
     <input type="date" name="assumption" required>

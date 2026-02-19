@@ -37,19 +37,12 @@ if (!empty($selectedDept)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-/* ===============================
-   PENDING REQUESTS / LEAVE
-=================================*/
 
 $pendingRequestQuery = $conn->query("SELECT COUNT(*) AS total_requests FROM requests WHERE status='Pending'");
 $pendingRequest = $pendingRequestQuery ? $pendingRequestQuery->fetch_assoc()['total_requests'] : 0;
 
 $pendingLeaveQuery = $conn->query("SELECT COUNT(*) AS total_leave FROM leave_application WHERE status='Pending'");
 $pendingLeave = $pendingLeaveQuery ? $pendingLeaveQuery->fetch_assoc()['total_leave'] : 0;
-
-/* ===============================
-   DYNAMIC CALENDAR
-=================================*/
 
 date_default_timezone_set('Asia/Manila');
 

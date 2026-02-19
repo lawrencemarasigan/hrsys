@@ -22,7 +22,6 @@ body{
     background-size:cover;
 }
 
-/* Sidebar */
 .sidebar-logo{
     display:flex;
     align-items:center;
@@ -115,7 +114,6 @@ body{
     background:#eee;
 }
 
-/* Title */
 .box-title{
     font-weight:bold;
     margin-bottom:10px;
@@ -123,18 +121,35 @@ body{
     color:#222;
 }
 
-/* USE button */
-.use-btn{
-    margin-top:10px;
-    padding:7px 22px;
-    border:1px solid #888;
-    background:#e0e0e0;
-    cursor:pointer;
+.use-btn {
+    background: linear-gradient(135deg, #4CAF50, #2e7d32);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.use-btn:hover{
-    background:#cfcfcf;
+.use-btn:hover {
+    background: linear-gradient(135deg, #43a047, #1b5e20);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
+
+.use-btn:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+    .use-btn {
+        width: 100%;
+    }
+}
+
 </style>
 
 </head>
@@ -171,7 +186,7 @@ body{
         <img src="/assets/images/oath.jpg"
              class="box-image">
 
-        <button onclick="window.open('oathform.php', '_blank')">USE</button>
+        <button class="use-btn" onclick="window.open('/main/forms/oathform.php', '_blank')">USE</button>
     </div>
 
 
@@ -182,7 +197,7 @@ body{
         <img src="/assets/images/sannic.png"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button class="use-btn" onclick="window.open('/main/forms/funds.php', '_blank')">USE</button>
     </div>
 
     <div class="box-item">
@@ -191,7 +206,7 @@ body{
         <img src="/assets/images/assumption.jpg"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button class="use-btn" onclick="window.open('/main/forms/assumption.php', '_blank')">USE</button>
     </div>
 
     <div class="box-item">
@@ -199,7 +214,7 @@ body{
         <img src="/assets/images/sannic.png"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button class="use-btn" onclick="window.open('/main/forms/certificate.php', '_blank')">USE</button>
     </div>
 
     <div class="box-item">
@@ -208,7 +223,8 @@ body{
         <img src="/assets/images/csform.jpg"
              class="box-image">
 
-        <button onclick="window.open('csform.php', '_blank')">USE</button>
+    <button class="use-btn" onclick="window.open('/main/forms/csform.php', '_blank')">USE</button>
+
     </div>
 
     <div class="box-item">
@@ -217,7 +233,7 @@ body{
         <img src="/assets/images/appointment.jpg"
              class="box-image">
 
-        <button class="use-btn">USE</button>
+        <button class="use-btn" onclick="window.open('/main/forms/appointment.php', '_blank')">USE</button>
     </div>
 
 </div>

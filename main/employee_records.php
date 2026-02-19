@@ -279,6 +279,12 @@ body {
 
 <form action="add_employee.php" method="POST">
 
+<?php if (isset($_GET['success'])): ?>
+<div class="alert alert-success">
+    Employee added successfully!
+</div>
+<?php endif; ?>
+
 <div class="row mb-3">
 <div class="col">
     <label>First Name</label>

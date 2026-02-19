@@ -69,20 +69,23 @@ button:hover{
 
         <form method="POST" action="oath_print.php" target="_blank">
 
-    <label>Date of Assumption</label>
-    <input type="date" name="assumption" required>
+    <label>Name of Appointee</label>
+    <input type="text" name="appointee" required>
 
-    <label>Appropriation Ordinance No.</label>
-    <input type="text" name="ordinance" required>
+    <label>Address</label>
+    <input type="text" name="address" required>
 
-    <label>Series Year</label>
-    <input type="text" name="year" required>
+    <label>Position Title</label>
+    <input type="text" name="position" required>
 
-    <label>Mayor Signature Date</label>
-    <input type="date" name="mayorDate" required>
+    <label>Appointee</label>
+    <input type="text" name="appointeesig" required>
 
-    <label>Accountant Signature Date</label>
-    <input type="date" name="acctDate" required>
+    <label>Day</label>
+    <input type="text" name="day" required>
+
+    <label>Month</label>
+    <input type="text" name="month" required>
 
     <button type="submit">Generate & Print</button>
 

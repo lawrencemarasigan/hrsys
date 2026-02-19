@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use setasign\Fpdi\Tcpdf\Fpdi;
 
@@ -16,8 +16,7 @@ $acctDate   = $_POST['acctDate'] ?? '';
 
 $pdf = new Fpdi();
 
-// 🔥 VERY IMPORTANT: Use EXACT file name
-$templatePath = __DIR__ . '/../assets/forms/csform.pdf';
+$templatePath = __DIR__ . '/../../assets/forms/csform.pdf';
 
 if (!file_exists($templatePath)) {
     die("Template not found: " . $templatePath);
