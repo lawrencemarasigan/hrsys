@@ -158,7 +158,6 @@ body{
 <!-- Sidebar -->
 <div class="sidebar">
 
-    <!-- Logo Section -->
     <div class="sidebar-logo">
         <img src="/assets/images/sannic.png" alt="LGU Logo">
         <div class="logo-text">

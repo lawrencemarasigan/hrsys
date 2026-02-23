@@ -38,7 +38,6 @@ body {
     height: 100vh;
 }
 
-/* SIDEBAR */
 .sidebar {
     width: 260px;
     background: #ffffff;
@@ -89,13 +88,11 @@ body {
     color: #fff;
 }
 
-/* CONTENT */
 .content {
     margin-left: 280px;
     padding: 30px;
 }
 
-/* BUTTONS */
 .btn-view {
     background-color: #14532d;
     color: #fff;
@@ -278,7 +275,7 @@ body {
 </div>
 
 <form action="add_employee.php" method="POST">
-
+<!--- Add Employee --->
 <?php if (isset($_GET['success'])): ?>
 <div class="alert alert-success">
     Employee added successfully!
@@ -375,15 +372,11 @@ body {
     </select>
 </div>
 
-
-<!-- POSITION -->
 <div class="mb-3">
 <label>Position</label>
 <input type="text" name="position" class="form-control">
 </div>
 
-
-<!-- EMPLOYEE STATUS -->
 <div class="mb-3">
     <label>Employee Status</label>
         <select name="employee_status" class="form-control">
@@ -422,8 +415,6 @@ body {
     </div>
 </div>
 
-
-<!-- ROLE + EMAIL + PASSWORD -->
 <div class="row mb-3">
     <div class="col">
         <label>Role</label>

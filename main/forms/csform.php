@@ -58,7 +58,7 @@ button:hover{
 
 <div class="container">
 
-    <!-- LEFT SIDE: YOUR ACTUAL PDF -->
+    <!-- LEFT SIDE: SAN NIC PDF -->
     <div class="pdf-viewer">
         <iframe src="../../assets/forms/csform.pdf" width="100%" height="100%"></iframe>
     </div>

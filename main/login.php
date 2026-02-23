@@ -1,7 +1,5 @@
 <?php
 session_start();
-
-
 // Database connection
 $host = "localhost";
 $user = "root";
@@ -23,8 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = "Email and password are required.";
     } else {
 
-        // ADMIN ONLY LOGIN (assumes you have a 'role' column set to 'admin')
-        // If you don't have role column yet, remove "AND role = 'admin'"
         $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email = ?");
         
         if (!$stmt) {
@@ -37,9 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($result && $result->num_rows === 1) {
             $userData = $result->fetch_assoc();
-
-            // Debug helper (remove after testing)
-            // var_dump($userData); exit;
 
             if (password_verify($password, $userData['password'])) {
                 $_SESSION['user_id'] = $userData['id'];

@@ -1,6 +1,6 @@
 <?php
 $current = basename($_SERVER['PHP_SELF']);
-
+// Database connection and queries
 function active($page) {
     return $GLOBALS['current'] === $page ? 'active' : '';
 }
@@ -10,16 +10,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-/* ===============================
-   EMPLOYEE FILTER + LIMIT 10
-=================================*/
-
 $selectedDept = isset($_GET['department']) ? $_GET['department'] : '';
 
-// Get department list
 $deptQuery = $conn->query("SELECT DISTINCT department FROM employees");
 
-// Employee query
 $sql = "SELECT name, department, position, employee_status FROM employees";
 
 if (!empty($selectedDept)) {
@@ -73,6 +67,7 @@ if ($nextMonth == 13) { $nextMonth = 1; $nextYear++; }
 <meta charset="UTF-8">
 <title>LGU Dashboard</title>
 <style>
+    /*----- CSS -----*/
 *{box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
     margin:0;
@@ -199,7 +194,6 @@ th{
     text-align:center;
     background:#f1f6fb;
 }
-/* Small circular highlight for today */
 .today-date{
     display:inline-block;
     width:26px;
@@ -230,7 +224,7 @@ select{
 }
 </style>
 </head>
-
+<!----- HTML ----->
 <body>
 <div class="overlay">
 <div class="wrapper">
@@ -262,7 +256,7 @@ select{
     <strong>Admin</strong>
 </div>
 
-<!-- PENDING CARDS -->
+<!-- CARDS -->
 <div class="cards">
     <div class="card" onclick="window.location.href='requests.php'">
         <div>📝 Pending Request</div>

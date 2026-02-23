@@ -31,11 +31,7 @@ $pdf->useTemplate($template);
 $pdf->SetFont('helvetica', '', 11);
 $pdf->SetTextColor(0, 0, 0);
 
-//
-// ===== WRITE VALUES =====
-//
-
-// 🔹 "on ____________"
+// 🔹 Assumption
 $pdf->SetXY(40, 108);
 $pdf->Write(0, $assumption);
 
