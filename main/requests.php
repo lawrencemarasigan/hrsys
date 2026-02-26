@@ -45,6 +45,8 @@ body {
     min-height: 100vh;
     position: fixed;
     box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-logo{
@@ -214,6 +216,9 @@ body {
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
+    <a href="logout.php" class="menu-item logout"
+        onclick="return confirm('Are you sure you want to logout?')">
+        🚪 Logout</a>
 
 </div>
 
@@ -242,7 +247,7 @@ body {
 <tbody>
     <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= htmlspecialchars($row['request_no']) ?></td>
+            <td><?php echo "Req" . str_pad($row['request_no'], 3, "0", STR_PAD_LEFT); ?></td>
             <td><?= htmlspecialchars($row['employee_id']) ?></td>
             <td><?= htmlspecialchars($row['employee_name']) ?></td>
             <td><?= htmlspecialchars($row['department']) ?></td>
@@ -272,7 +277,8 @@ body {
 <script>
 $(document).ready(function () {
     $('#employeeTable').DataTable({
-        pageLength: 10
+        pageLength: 10,
+        order: [[0, 'desc']]
     });
 });
 </script>

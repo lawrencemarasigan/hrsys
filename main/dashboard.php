@@ -148,6 +148,18 @@ body{
     transform: translateY(-3px);
     border-left:4px solid #0b5ed7;
 }
+
+.calendar-box table{
+    width: 100%;
+    table-layout: fixed;
+}
+
+.calendar-box{
+    width: 420px;
+    min-width: 420px;
+    height: 420px;
+}
+
 .bottom-row{
     display:flex;
     gap:20px;
@@ -246,6 +258,9 @@ select{
     <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
     <a href="performance.php" class="menu-item">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
+    <a href="logout.php" class="menu-item"
+        onclick="return confirm('Are you sure you want to logout?')">
+        🚪 Logout</a>
 </div>
 
 <!-- MAIN -->
@@ -253,7 +268,7 @@ select{
 
 <div class="topbar">
     <h2>DASHBOARD</h2>
-    <strong>Admin</strong>
+    <strong>👤 Admin</strong>
 </div>
 
 <!-- CARDS -->

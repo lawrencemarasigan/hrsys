@@ -1,5 +1,8 @@
 $(document).ready(function () {
-    $('#employeeTable').DataTable();
+    $('#employeeTable').DataTable({
+        pageLength: 10,
+        order: [[0, 'desc']]
+    });
 });
 
 let currentEmployeeId = null;

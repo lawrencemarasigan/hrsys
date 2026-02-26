@@ -22,20 +22,6 @@ body{
     background-size:cover;
 }
 
-.sidebar-logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:15px 20px;
-    margin-bottom:10px;
-}
-
-.sidebar-logo img{
-    width:45px;
-    height:45px;
-    object-fit:contain;
-}
-
 .logo-text{
     display:flex;
     flex-direction:column;
@@ -52,14 +38,28 @@ body{
     color:#666;
 }
 
-.sidebar{
-    width:260px;
-    height:100vh;
-    background:#e9e9e9;
-    padding-top:20px;
-    position:fixed;
-    left:0;
-    top:0;
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    padding: 20px 12px;
+    min-height: 100vh;
+    position: fixed;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+}
+
+.sidebar-logo img {
+    width: 45px;
+    height: 45px;
 }
 
 .sidebar a{
@@ -173,6 +173,9 @@ body{
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
+    <a href="logout.php" class="menu-item logout"
+        onclick="return confirm('Are you sure you want to logout?')">
+        🚪 Logout</a>
 </div>
 
 <!-- Main Content -->
