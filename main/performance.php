@@ -4,9 +4,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT leave_app_no, employee_id, employee_name, department, position, type_of_leave, status FROM leave_application";
-$result = $conn->query($sql);
-
 function active($page) {
     return basename($_SERVER['PHP_SELF']) === $page ? 'active' : '';
 }
@@ -15,10 +12,9 @@ function active($page) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Employee Records</title>
+<title>Employee Performance</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 <style>
 
@@ -38,6 +34,7 @@ body {
     height: 100vh;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 260px;
     background: #ffffff;
@@ -90,19 +87,35 @@ body {
     color: #fff;
 }
 
+/* MAIN CONTENT */
 .content {
     margin-left: 280px;
     padding: 30px;
 }
 
+/* Performance Card */
+.performance-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 80px 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+}
+
 </style>
 </head>
+
 <body>
 
 <div class="overlay">
 <div class="wrapper">
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar">
 
     <div class="sidebar-logo">
@@ -122,8 +135,40 @@ body {
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
     <a href="logout.php" class="menu-item logout"
         onclick="return confirm('Are you sure you want to logout?')">
-        🚪 Logout</a>
+        🚪 Logout
+    </a>
 
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+    <!-- PAGE TITLE + SEARCH -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:bold; color:#1f4e79;">EMPLOYEE PERFORMANCE</h2>
+
+        <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Search Employee">
+
+            <select class="form-select">
+                <option>Select Year</option>
+                <option>2023</option>
+                <option>2024</option>
+                <option>2025</option>
+            </select>
+
+            <button class="btn btn-light border">🔍</button>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE CARD -->
+    <div class="performance-card">
+        <h4 style="color:#2c5cc5; font-weight:bold;">NO RESULTS FOUND.</h4>
+    </div>
+
+</div>
+
+</div>
 </div>
 
 </body>
