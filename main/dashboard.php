@@ -1,6 +1,6 @@
 <?php
+require_once "authorization.php";
 $current = basename($_SERVER['PHP_SELF']);
-// Database connection and queries
 function active($page) {
     return $GLOBALS['current'] === $page ? 'active' : '';
 }
@@ -38,6 +38,9 @@ $pendingRequest = $pendingRequestQuery ? $pendingRequestQuery->fetch_assoc()['to
 $pendingLeaveQuery = $conn->query("SELECT COUNT(*) AS total_leave FROM leave_application WHERE status='Pending'");
 $pendingLeave = $pendingLeaveQuery ? $pendingLeaveQuery->fetch_assoc()['total_leave'] : 0;
 
+$totalEmployees = $conn->query("SELECT COUNT(*) AS total_employees FROM employees");
+$totalEmployees = $totalEmployees ? $totalEmployees->fetch_assoc()['total_employees'] : 0;
+
 date_default_timezone_set('Asia/Manila');
 
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
@@ -66,43 +69,60 @@ if ($nextMonth == 13) { $nextMonth = 1; $nextYear++; }
 <head>
 <meta charset="UTF-8">
 <title>LGU Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
-    /*----- CSS -----*/
-*{box-sizing:border-box;font-family:Arial,sans-serif;}
+/*----- CSS -----*/
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
 body{
     margin:0;
     background:url("/assets/images/bgsannic.png") no-repeat center fixed;
     background-size:cover;
 }
+
 .overlay{
     background:rgba(173,216,230,.85);
     min-height:100vh;
 }
+
 .wrapper{
     display:flex;
 }
+
+/* SIDEBAR */
+
 .sidebar{
     width:260px;
     min-height:100vh;
     background:#e9e9e9;
     padding-top:20px;
     position:fixed;
-    left:0;top:0;
+    left:0;
+    top:0;
 }
+
 .sidebar-logo{
     display:flex;
     gap:12px;
     padding:15px 20px;
     align-items:center;
 }
+
 .sidebar-logo img{
     width:45px;
     height:45px;
 }
+
 .logo-title{
     font-weight:bold;
     color:#2c5cc5;
 }
+
 .menu-item{
     display:flex;
     gap:12px;
@@ -112,100 +132,189 @@ body{
     text-decoration:none;
     color:#0b5ed7;
 }
-.menu-item.active,.menu-item:hover{
+
+.menu-item.active,
+.menu-item:hover{
     background:#0b5ed7;
     color:#fff;
 }
+
+/* MAIN */
+
 .main{
     margin-left:260px;
-    padding:25px;
     width:calc(100% - 260px);
 }
+
+/* TOPBAR */
+
 .topbar{
     display:flex;
     justify-content:space-between;
+    align-items:center;
+    background:#e9e9e9;
+    padding:15px 25px;
+    border-bottom:1px solid #ddd;
 }
+
+.topbar h2{
+    color:#1c6fb7;
+    font-weight:700;
+    margin:0;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#333;
+    font-size:14px;
+}
+
+.user-icon{
+    font-size:18px;
+}
+
+/* CARDS */
+
 .cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:20px;
-    margin:20px 0;
+    padding:25px;
 }
-.card{
+
+.card-modern{
     background:#fff;
-    padding:20px;
-    border-radius:14px;
+    padding:22px;
+    border-radius:18px;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    gap:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.12);
+    transition:0.2s;
+}
+
+.card-modern:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 22px rgba(0,0,0,0.18);
+}
+
+.card-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.green{
+    background:#e7f5ec;
+    color:#2e7d32;
+}
+
+.yellow{
+    background:#fff6d6;
+    color:#e6b800;
+}
+
+.blue{
+    background:#d0ebff;
+    color:#1c7ed6;
+    font-size:15px;
+}
+
+.card-number{
     font-size:14px;
-    box-shadow:0 3px 6px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    cursor:pointer;
-}
-.card:hover{
-    box-shadow:0 6px 20px rgba(0,0,0,0.3);
-    transform: translateY(-3px);
-    border-left:4px solid #0b5ed7;
+    font-weight:500;
 }
 
-.calendar-box table{
-    width: 100%;
-    table-layout: fixed;
+.card-label{
+    font-size:14px;
+    color:#666;
 }
 
-.calendar-box{
-    width: 420px;
-    min-width: 420px;
-    height: 420px;
-}
+/* LOWER SECTION */
 
 .bottom-row{
     display:flex;
-    gap:20px;
+    gap:25px;
+    padding:0 25px 25px 25px;
     flex-wrap:wrap;
 }
-.employee-box,.calendar-box{
+
+/* BOXES */
+
+.employee-box,
+.calendar-box{
     background:#fff;
-    padding:20px;
-    border-radius:14px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    transition:0.2s;
 }
+
+.employee-box:hover,
+.calendar-box:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.18);
+}
+
 .employee-box{
-    flex:2;
-    min-width:400px;
+    flex:2.2;
 }
+
 .calendar-box{
     flex:1;
-    min-width:300px;
+    height: 370px;
 }
+
+/* EMPLOYEE TABLE */
+
 .employee-table{
     width:100%;
     border-collapse:collapse;
     font-size:13px;
 }
+
 .employee-table th{
     background:#0b5ed7;
     color:#fff;
     padding:10px;
 }
+
 .employee-table td{
     padding:10px;
     border-bottom:1px solid #ddd;
 }
+
+/* CALENDAR */
+
+.calendar-box table{
+    width:100%;
+    table-layout:fixed;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
     margin-top:10px;
 }
+
 th,td{
     border:1px solid #ddd;
-    height:40px;padding:5px;
+    height:40px;
+    padding:5px;
     text-align:right;
 }
+
 th{
     text-align:center;
     background:#f1f6fb;
 }
+
 .today-date{
     display:inline-block;
     width:26px;
@@ -217,9 +326,26 @@ th{
     font-weight:bold;
     text-align:center;
 }
-.calendar-controls{
-    display:flex;gap:8px;
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
 }
+
+#monthTitle{
+    color:#0d6efd;
+    margin:0;
+}
+
+/* BUTTONS */
+
+.calendar-controls{
+    display:flex;
+    gap:8px;
+}
+
 .cal-btn{
     text-decoration:none;
     padding:6px 10px;
@@ -228,9 +354,11 @@ th{
     border-radius:6px;
     font-size:13px;
 }
+
 .cal-btn:hover{
     background:#084298;
 }
+
 select{
     padding:6px;
 }
@@ -258,29 +386,58 @@ select{
     <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
     <a href="performance.php" class="menu-item">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
-    <a href="logout.php" class="menu-item"
-        onclick="return confirm('Are you sure you want to logout?')">
-        🚪 Logout</a>
+    <a href="#" class="menu-item logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        🚪 Logout
+    </a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-    <h2>DASHBOARD</h2>
-    <strong>👤 Admin</strong>
+    <div class="topbar-left">
+        <h2>DASHBOARD</h2>
+    </div>
+
+    <div class="topbar-right">
+        <span class="user-icon">👤</span>
+        <span class="username">Admin</span>
+    </div>
 </div>
+
+<div class="topbar-line"></div>
 
 <!-- CARDS -->
 <div class="cards">
-    <div class="card" onclick="window.location.href='requests.php'">
-        <div>📝 Pending Request</div>
-        <div><?= $pendingRequest ?></div>
+
+<div class="card-modern">
+    <div class="card-icon blue">📅</div>
+    <div class="card-info">
+        <div class="card-number" id="currentTimeSmall"></div>
+        <div class="card-label">Current Time&Date</div>
     </div>
-    <div class="card" onclick="window.location.href='leave_application.php'">
-        <div>📎 Pending Leave</div>
-        <div><?= $pendingLeave ?></div>
+</div>
+<div class="card-modern">
+    <div class="card-icon yellow">👥</div>
+    <div class="card-info">
+        <div class="card-number"><?= $totalEmployees ?></div>
+        <div class="card-label">Total Employees</div>
     </div>
+</div>
+<div class="card-modern">
+    <div class="card-icon green">📝</div>
+    <div class="card-info">
+        <div class="card-number"><?= $pendingRequest ?></div>
+        <div class="card-label">Pending Requests</div>
+    </div>
+</div>
+<div class="card-modern">
+    <div class="card-icon yellow">📎</div>
+    <div class="card-info">
+        <div class="card-number"><?= $pendingLeave ?></div>
+        <div class="card-label">Pending Leave</div>
+    </div>
+</div>
 </div>
 
 <div class="bottom-row">
@@ -326,38 +483,55 @@ select{
 
 <!-- CALENDAR -->
 <div class="calendar-box">
-<div style="display:flex;justify-content:space-between;align-items:center;">
-    <h2>WORK CALENDAR</h2>
+
+<div class="calendar-header">
+
+    <h3 id="monthTitle"><?= $monthName ?></h3>
+
     <div class="calendar-controls">
-        <a class="cal-btn" href="?month=<?= $todayMonth ?>&year=<?= $todayYear ?>&department=<?= urlencode($selectedDept) ?>">Today</a>
-        <a class="cal-btn" href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?>&department=<?= urlencode($selectedDept) ?>">◀</a>
-        <a class="cal-btn" href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?>&department=<?= urlencode($selectedDept) ?>">▶</a>
+        <button class="cal-btn" onclick="goToday()">Today</button>
+        <button class="cal-btn" onclick="changeMonth(-1)">◀</button>
+        <button class="cal-btn" onclick="changeMonth(1)">▶</button>
     </div>
+
 </div>
-
-<h3 style="color:#0d6efd"><?= $monthName ?></h3>
-
 <table>
-<tr>
-    <th>Sun</th><th>Mon</th><th>Tue</th>
-    <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-</tr>
-<tr>
-<?php
-for ($i = 0; $i < $startDay; $i++) echo "<td></td>";
-
-for ($day = 1; $day <= $daysInMonth; $day++) {
-    if (($startDay + $day - 1) % 7 == 0 && $day != 1) echo "</tr><tr>";
-    if ($day == $todayDay && $month == $todayMonth && $year == $todayYear) {
-        echo "<td><span class='today-date'>$day</span></td>";
-    } else {
-        echo "<td>$day</td>";
-    }
-}
-echo "</tr>";
-?>
+    <tr>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+    </tr>
+<tbody id="calendarBody"></tbody>
 </table>
 </div>
+
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="logout.php" class="btn btn-danger">Logout</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/javascript/dashboard.js"></script>
 
 </div>
 </div>

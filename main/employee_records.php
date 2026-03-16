@@ -1,4 +1,5 @@
 <?php
+require_once "authorization.php";
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -185,6 +186,7 @@ body {
     cursor:pointer;
 }
 
+
 .btn-primary{background:#0d6efd;color:#fff;}
 .btn-danger{background:#dc3545;color:#fff;}
 .btn-secondary{background:#6c757d;color:#fff;}
@@ -214,14 +216,14 @@ body {
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
-    <a href="logout.php" class="menu-item logout"
-        onclick="return confirm('Are you sure you want to logout?')">
-        🚪 Logout</a>
+    <a href="#" class="menu-item logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        🚪 Logout
+    </a>
 
 </div>
 
 <div class="content">
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between  align-items-center mb-3">
     <h3>EMPLOYEE RECORDS</h3>
     <button class="btn btn-success" onclick="showAddEmployeeForm()">
         ➕ Add Employee
@@ -244,12 +246,12 @@ body {
 
 <?php while ($row = $result->fetch_assoc()): ?>
     <tr>
-        <td><?= $row['id'] ?></td>
-            <td><?= htmlspecialchars($row['name']) ?></td>
-                <td><?= htmlspecialchars($row['department']) ?></td>
-            <td><?= htmlspecialchars($row['position']) ?></td>
-    <td><?= date("m-d-Y", strtotime($row['hired_at'])) ?></td>
-<td>
+        <td><?php echo "Emp No." . str_pad($row['id'], 3, "0", STR_PAD_LEFT); ?></td>
+        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?= htmlspecialchars($row['department']) ?></td>
+        <td><?= htmlspecialchars($row['position']) ?></td>
+        <td><?= date("m-d-Y", strtotime($row['hired_at'])) ?></td>
+    <td>
         <button class="btn btn-sm btn-view"
             onclick="showViewEmployee(<?= $row['id'] ?>)">
             View
@@ -628,7 +630,33 @@ onclick="hideAddEmployeeForm()">
     </div>
 </div>
 
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
 
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+        </button>
+
+        <a href="logout.php" class="btn btn-danger">
+            Logout
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

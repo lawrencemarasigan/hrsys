@@ -1,4 +1,5 @@
 <?php
+require_once "authorization.php";
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -79,7 +80,7 @@ body {
     margin-bottom: 8px;
     border-radius: 12px;
     text-decoration: none;
-    color: #000000;
+    color: #1e40af;
     font-weight: 500;
 }
 
@@ -214,6 +215,9 @@ body {
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
+    <a href="#" class="menu-item logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        🚪 Logout
+    </a>
 
 </div>
 
@@ -265,6 +269,33 @@ body {
     </table>
 </div>
 
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+        </button>
+
+        <a href="logout.php" class="btn btn-danger">
+            Logout
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

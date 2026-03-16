@@ -1,4 +1,5 @@
 <?php
+require_once "authorization.php";
 $current = basename($_SERVER['PHP_SELF']);
 
 function active($page) {
@@ -15,11 +16,17 @@ date_default_timezone_set('Asia/Manila');
 <title>Form 201</title>
 
 <style>
+html, body{
+    height:100%;
+}
 body{
     margin:0;
     font-family: Arial, sans-serif;
-    background:url("/assets/images/bgsannic.png") no-repeat center fixed;
+    background:
+    linear-gradient(rgba(120,170,190,0.75), rgba(120,170,190,0.75)),
+    url("/assets/images/bgsannic.png") no-repeat center fixed;
     background-size:cover;
+    overflow-x:hidden;
 }
 
 .logo-text{
@@ -62,17 +69,6 @@ body{
     height: 45px;
 }
 
-.sidebar a{
-    display:block;
-    padding:14px 20px;
-    margin:6px 10px;
-    text-decoration:none;
-    color:#2c5cc5;
-    font-size:16px;
-    border-radius:10px;
-    transition:0.2s;
-}
-
 .sidebar a:hover{
     background:#d6e4ff;
 }
@@ -85,20 +81,31 @@ body{
 .main{
     margin-left:260px;
     min-height:100vh;
-    padding:30px;
-    background:
-    linear-gradient(rgba(120,170,190,0.75), rgba(120,170,190,0.75)),
-    url('/hrsys/assets/images/bgsannic.png');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
+    padding:40px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1e40af;
+    font-weight: 500;
+}
+
+.menu-item.active {
+    background: #0d6efd;
+    color: #fff;
 }
 
 .box-container{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap:40px;
-    padding-top:20px;
+    padding:20px 40px;
 }
 
 .box-item{
@@ -173,9 +180,9 @@ body{
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
-    <a href="logout.php" class="menu-item logout"
-        onclick="return confirm('Are you sure you want to logout?')">
-        🚪 Logout</a>
+    <a href="#" class="menu-item logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        🚪 Logout
+    </a>
 </div>
 
 <!-- Main Content -->
@@ -241,6 +248,34 @@ body{
 </div>
 
 </div>
+
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+        </button>
+
+        <a href="logout.php" class="btn btn-danger">
+            Logout
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function openForm() {
     window.open("csform.php", "_blank");
