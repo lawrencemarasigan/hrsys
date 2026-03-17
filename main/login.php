@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = "Email and password are required.";
     } else {
 
-        $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, email, password FROM adminaccount WHERE email = ?");
         
         if (!$stmt) {
             die("SQL Error: " . $conn->error);

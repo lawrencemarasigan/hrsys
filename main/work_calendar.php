@@ -169,7 +169,6 @@ body {
 <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
 <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
 <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
-<a href="logout.php" class="menu-item" onclick="return confirm('Are you sure you want to logout?')">🚪 Logout</a>
 
     </div>
         <div class="content">
