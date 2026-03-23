@@ -5,6 +5,33 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+/* ===== AJAX HANDLER ===== */
+if (isset($_POST['action'])) {
+
+    if ($_POST['action'] == "get") {
+        $id = $_POST['id'];
+
+        $stmt = $conn->prepare("SELECT * FROM requests WHERE request_no=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        echo json_encode($result->fetch_assoc());
+        exit;
+    }
+
+    if ($_POST['action'] == "update") {
+        $id = $_POST['request_no'];
+        $status = $_POST['status'];
+
+        $stmt = $conn->prepare("UPDATE requests SET status=? WHERE request_no=?");
+        $stmt->bind_param("si", $status, $id);
+
+        echo $stmt->execute() ? "success" : "error";
+        exit;
+    }
+}
+
 $sql = "SELECT request_no, employee_id, employee_name, department, position, request_type, status FROM requests";
 $result = $conn->query($sql);
 
@@ -12,11 +39,12 @@ function active($page) {
     return basename($_SERVER['PHP_SELF']) === $page ? 'active' : '';
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Employee Records</title>
+<title>Employee Requests</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -194,14 +222,13 @@ body {
 
 </style>
 </head>
-<body>
 
+<body>
 <div class="overlay">
 <div class="wrapper">
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar">
-
     <div class="sidebar-logo">
         <img src="/assets/images/sannic.png">
         <div>
@@ -217,77 +244,115 @@ body {
     <a href="leave_application.php" class="menu-item <?= active('leave_application.php') ?>">📎 Leave Application</a>
     <a href="performance.php" class="menu-item <?= active('performance.php') ?>">📈 Performance</a>
     <a href="work_calendar.php" class="menu-item <?= active('work_calendar.php') ?>">📅 Work Calendar</a>
-
 </div>
 
 <div class="content">
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="fw-bold text-dark">EMPLOYEE REQUESTS</h3>
-    <button class="btn btn-warning fw-semibold"
-        onclick="window.print()">
+    <button class="btn btn-warning fw-semibold" onclick="window.print()">
         Print Requests
     </button>
 </div>
+
 <table id="employeeTable" class="table table-bordered table-striped">
 <thead class="table-primary">
-    <tr>
-        <th>Request No.</th>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Position</th>
-        <th>Request Type</th>
-        <th>Status</th>
-        <th width="120">Action</th>
-    </tr>
+<tr>
+    <th>Request No.</th>
+    <th>Employee ID</th>
+    <th>Employee Name</th>
+    <th>Department</th>
+    <th>Position</th>
+    <th>Request Type</th>
+    <th>Status</th>
+    <th width="120">Action</th>
+</tr>
 </thead>
 
 <tbody>
-    <?php while ($row = $result->fetch_assoc()): ?>
-        <tr>
-            <td><?php echo "Req" . str_pad($row['request_no'], 3, "0", STR_PAD_LEFT); ?></td>
-            <td><?= htmlspecialchars($row['employee_id']) ?></td>
-            <td><?= htmlspecialchars($row['employee_name']) ?></td>
-            <td><?= htmlspecialchars($row['department']) ?></td>
-            <td><?= htmlspecialchars($row['position']) ?></td>
-            <td><?= htmlspecialchars($row['request_type']) ?></td>
-            <td><?= htmlspecialchars($row['status']) ?></td>
-        <td>
-            <button class="btn btn-sm btn-view"
+<?php while ($row = $result->fetch_assoc()): ?>
+<tr>
+    <td><?= "Req" . str_pad($row['request_no'], 3, "0", STR_PAD_LEFT); ?></td>
+    <td><?= htmlspecialchars($row['employee_id']) ?></td>
+    <td><?= htmlspecialchars($row['employee_name']) ?></td>
+    <td><?= htmlspecialchars($row['department']) ?></td>
+    <td><?= htmlspecialchars($row['position']) ?></td>
+    <td><?= htmlspecialchars($row['request_type']) ?></td>
+    <td><?= htmlspecialchars($row['status']) ?></td>
+    <td>
+        <button class="btn btn-sm btn-view"
             onclick="showViewEmployee('<?= $row['request_no'] ?>')">
             View
-            </button>
-            <button class="btn btn-sm btn-print"
-            onclick="printEmployee('<?= $row['request_no'] ?>')">
-            Print
-            </button>
-        </td>
-    </tr>
+        </button>
+    </td>
+</tr>
 <?php endwhile; ?>
-        </tbody>
-    </table>
+</tbody>
+</table>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1">
+<!-- VIEW MODAL -->
+<div class="modal fade" id="viewModal" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Request Details</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<form id="updateForm">
+<div class="modal-body">
+
+<input type="hidden" name="request_no" id="request_no">
+
+<label>Employee Name</label>
+<input type="text" id="employee_name" class="form-control mb-2" readonly>
+
+<label>Department</label>
+<input type="text" id="department" class="form-control mb-2" readonly>
+
+<label>Position</label>
+<input type="text" id="position" class="form-control mb-2" readonly>
+
+<label>Request Type</label>
+<input type="text" id="request_type" class="form-control mb-2" readonly>
+
+<label>Status</label>
+<select name="status" id="status" class="form-control">
+<option value="Pending">Pending</option>
+<option value="Approved">Approved</option>
+<option value="Rejected">Rejected</option>
+</select>
+
+</div>
+
+<div class="modal-footer">
+<button type="submit" class="btn btn-primary">Update</button>
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+</form>
+
+</div>
+</div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal fade" id="successModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Confirm Logout</h5>
+        <h5 class="modal-title">Update Successful</h5>
       </div>
 
       <div class="modal-body">
-        Are you sure you want to logout?
+        Status updated successfully.
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
+        <button type="button" class="btn btn-primary" id="successOkBtn">
+          OK
         </button>
-
-        <a href="logout.php" class="btn btn-danger">
-            Logout
-        </a>
       </div>
 
     </div>
@@ -306,6 +371,56 @@ $(document).ready(function () {
         order: [[0, 'desc']]
     });
 });
+
+// VIEW
+function showViewEmployee(id) {
+    $.post("", { action: "get", id: id }, function(data) {
+        data = JSON.parse(data);
+
+        $("#request_no").val(data.request_no);
+        $("#employee_name").val(data.employee_name);
+        $("#department").val(data.department);
+        $("#position").val(data.position);
+        $("#request_type").val(data.request_type);
+        $("#status").val(data.status);
+
+        new bootstrap.Modal(document.getElementById('viewModal')).show();
+    });
+}
+
+// UPDATE
+$("#updateForm").submit(function(e){
+    e.preventDefault();
+
+    $.post("", $(this).serialize() + "&action=update", function(){
+
+        // CLOSE VIEW MODAL
+        let viewModal = bootstrap.Modal.getInstance(document.getElementById('viewModal'));
+        viewModal.hide();
+
+        // UPDATE TABLE (NO RELOAD)
+        updateRow($("#request_no").val(), $("#status").val());
+
+        // SHOW SUCCESS MODAL
+        let successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+
+        $("#successOkBtn").off("click").on("click", function(){
+            successModal.hide();
+        });
+
+    });
+});
+
+function updateRow(id, status){
+    $("#employeeTable tbody tr").each(function(){
+        let rowId = $(this).find("td:first").text().replace("Req","").trim();
+
+        if (parseInt(rowId) == id){
+            $(this).find("td:eq(6)").text(status);
+        }
+    });
+}
 </script>
 
 </body>

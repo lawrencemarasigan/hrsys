@@ -23,6 +23,7 @@ $request_result = $conn->query($request_query);
 
 $count_leave = $leave_result->num_rows;
 $count_request = $request_result->num_rows;
+
 $total_notifications = $count_leave + $count_request;
 ?>
 <!DOCTYPE html>

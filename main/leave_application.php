@@ -5,6 +5,33 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+/* =================== AJAX ================== */
+if (isset($_POST['action'])) {
+
+    if ($_POST['action'] == "get") {
+        $id = $_POST['id'];
+
+        $stmt = $conn->prepare("SELECT * FROM leave_application WHERE leave_app_no=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        echo json_encode($result->fetch_assoc());
+        exit;
+    }
+
+    if ($_POST['action'] == "update") {
+        $id = $_POST['leave_app_no'];
+        $status = $_POST['status'];
+
+        $stmt = $conn->prepare("UPDATE leave_application SET status=? WHERE leave_app_no=?");
+        $stmt->bind_param("si", $status, $id);
+
+        echo $stmt->execute() ? "success" : "error";
+        exit;
+    }
+}
+
 $sql = "SELECT leave_app_no, employee_id, employee_name, department, position, type_of_leave, status FROM leave_application";
 $result = $conn->query($sql);
 
@@ -12,6 +39,7 @@ function active($page) {
     return basename($_SERVER['PHP_SELF']) === $page ? 'active' : '';
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,14 +50,12 @@ function active($page) {
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 <style>
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: url("/assets/images/bgsannic.png") no-repeat center center fixed;
     background-size: cover;
 }
-
 .overlay {
     background: rgba(173, 216, 230, 0.85);
     min-height: 100vh;
@@ -45,31 +71,31 @@ body {
     padding: 20px 12px;
     min-height: 100vh;
     position: fixed;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar-logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:15px 20px;
-    margin-bottom:10px;
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
 }
 
-.sidebar-logo img{
-    width:45px;
-    height:45px;
+.sidebar-logo img {
+    width: 45px;
+    height: 45px;
 }
 
-.logo-title{
-    font-size:18px;
-    font-weight:bold;
-    color:#2c5cc5;
+.logo-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c5cc5;
 }
 
-.logo-sub{
-    font-size:12px;
-    color:#666;
+.logo-sub {
+    font-size: 12px;
+    color: #666;
 }
 
 .menu-item {
@@ -113,93 +139,15 @@ body {
     background-color: #facc15;
     color: #000;
 }
-
-.add-panel {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.add-panel-content {
-    background: #fff;
-    width: 800px;
-    max-width: 95%;
-    border-radius: 10px;
-    padding: 25px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.panel-header h4 {
-    color: #020304;
-}
-
-.panel-overlay{
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.4);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.panel-container{
-    background:#fff;
-    padding:20px;
-    width:500px;
-    border-radius:8px;
-}
-
-.view-field{
-    background:#e9ecef;
-    padding:10px;
-    border-radius:6px;
-}
-
-.panel-buttons{
-    margin-top:15px;
-    text-align:right;
-}
-
-.btn{
-    padding:8px 15px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-}
-
-.btn-primary{background:#0d6efd;color:#fff;}
-.btn-danger{background:#dc3545;color:#fff;}
-.btn-secondary{background:#6c757d;color:#fff;}
-
 </style>
 </head>
-<body>
 
+<body>
 <div class="overlay">
 <div class="wrapper">
 
-<!-- SIDEBAR -->
+<!------------------------ SIDEBAR ------------------------------------>
 <div class="sidebar">
-
     <div class="sidebar-logo">
         <img src="/assets/images/sannic.png">
         <div>
@@ -220,71 +168,109 @@ body {
 <div class="content">
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="fw-bold text-dark">Leave Application</h3>
-    <button class="btn btn-warning fw-semibold"
-        onclick="window.print()">
-        Print Leave
-    </button>
+    <button class="btn btn-warning fw-semibold" onclick="window.print()">Print Leave</button>
 </div>
+
 <table id="employeeTable" class="table table-bordered table-striped">
 <thead class="table-primary">
-    <tr>
-        <th>Leave Application No.</th>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Position</th>
-        <th>Type of Leave</th>
-        <th>Status</th>
-        <th width="120">Action</th>
-    </tr>
+<tr>
+    <th>Leave App. No.</th>
+    <th>Employee ID</th>
+    <th>Employee Name</th>
+    <th>Department</th>
+    <th>Position</th>
+    <th>Type of Leave</th>
+    <th>Status</th>
+    <th width="120">Action</th>
+</tr>
 </thead>
 
 <tbody>
-    <?php while ($row = $result->fetch_assoc()): ?>
-        <tr>
-            <td><?php echo "LN" . str_pad($row['leave_app_no'], 3, "0", STR_PAD_LEFT); ?></td>
-            <td><?= htmlspecialchars($row['employee_id']) ?></td>
-            <td><?= htmlspecialchars($row['employee_name']) ?></td>
-            <td><?= htmlspecialchars($row['department']) ?></td>
-            <td><?= htmlspecialchars($row['position']) ?></td>
-            <td><?= htmlspecialchars($row['type_of_leave']) ?></td>
-            <td><?= htmlspecialchars($row['status']) ?></td>
-        <td>
-            <button class="btn btn-sm btn-view"
-            onclick="showViewEmployee('<?= $row['leave_app_no'] ?>')">
-            View
-            </button>
-            <button class="btn btn-sm btn-print"
-            onclick="printEmployee('<?= $row['leave_app_no'] ?>')">
-            Print
-            </button>
-        </td>
-    </tr>
+<?php while ($row = $result->fetch_assoc()): ?>
+<tr>
+    <td><?= "LN" . str_pad($row['leave_app_no'], 3, "0", STR_PAD_LEFT); ?></td>
+    <td><?= htmlspecialchars($row['employee_id']) ?></td>
+    <td><?= htmlspecialchars($row['employee_name']) ?></td>
+    <td><?= htmlspecialchars($row['department']) ?></td>
+    <td><?= htmlspecialchars($row['position']) ?></td>
+    <td><?= htmlspecialchars($row['type_of_leave']) ?></td>
+    <td><?= htmlspecialchars($row['status']) ?></td>
+    <td>
+        <button class="btn btn-sm btn-view"
+        onclick="showViewEmployee('<?= $row['leave_app_no'] ?>')">
+        View
+        </button>
+        <button class="btn btn-sm btn-print">Print</button>
+    </td>
+</tr>
 <?php endwhile; ?>
-        </tbody>
-    </table>
+</tbody>
+</table>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1">
+<!------------------ VIEW MODAL ------------------->
+<div class="modal fade" id="viewModal" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Leave Details</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<form id="updateForm">
+<div class="modal-body">
+
+<input type="hidden" name="leave_app_no" id="leave_app_no">
+
+<label>Employee Name</label>
+<input type="text" id="employee_name" class="form-control mb-2" readonly>
+
+<label>Department</label>
+<input type="text" id="department" class="form-control mb-2" readonly>
+
+<label>Position</label>
+<input type="text" id="position" class="form-control mb-2" readonly>
+
+<label>Type of Leave</label>
+<input type="text" id="type_of_leave" class="form-control mb-2" readonly>
+
+<label>Status</label>
+<select name="status" id="status" class="form-control">
+<option value="Pending">Pending</option>
+<option value="Approved">Approved</option>
+<option value="Rejected">Rejected</option>
+</select>
+
+</div>
+
+<div class="modal-footer">
+<button type="submit" class="btn btn-primary">Update Status</button>
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+</form>
+
+</div>
+</div>
+</div>
+
+<!------------------- SUCCESS MODAL ------------------------->
+<div class="modal fade" id="successModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Confirm Logout</h5>
+        <h5 class="modal-title">Update Successful</h5>
       </div>
 
       <div class="modal-body">
-        Are you sure you want to logout?
+        Status has been updated successfully.
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
+        <button type="button" class="btn btn-primary" id="successOkBtn">
+            OK
         </button>
-
-        <a href="logout.php" class="btn btn-danger">
-            Logout
-        </a>
       </div>
 
     </div>
@@ -300,6 +286,69 @@ body {
 $(document).ready(function () {
     $('#employeeTable').DataTable({
         pageLength: 10
+    });
+});
+
+// view function
+function showViewEmployee(id) {
+    $.ajax({
+        url: "",
+        method: "POST",
+        data: { action: "get", id: id },
+        dataType: "json",
+        success: function(data) {
+
+            $("#leave_app_no").val(data.leave_app_no);
+            $("#employee_name").val(data.employee_name);
+            $("#department").val(data.department);
+            $("#position").val(data.position);
+            $("#type_of_leave").val(data.type_of_leave);
+            $("#status").val(data.status);
+
+            new bootstrap.Modal(document.getElementById('viewModal')).show();
+        }
+    });
+}
+
+function updateRow(id, status){
+    $("#employeeTable tbody tr").each(function(){
+
+        let rowText = $(this).find("td:first").text().trim();
+        let rowId = parseInt(rowText.replace("LN",""));
+
+        if (rowId === parseInt(id)){
+            $(this).find("td:eq(6)").text(status);
+        }
+    });
+}
+
+$("#updateForm").submit(function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: "",
+        method: "POST",
+        data: $(this).serialize() + "&action=update",
+        success: function(){
+
+            let id = $("#leave_app_no").val();
+            let status = $("#status").val();
+
+            updateRow(id, status);
+
+            let viewModalEl = document.getElementById('viewModal');
+            let viewModal = bootstrap.Modal.getInstance(viewModalEl);
+            viewModal.hide();
+
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+
+            $("#successOkBtn").off("click").on("click", function(){
+                let successModalEl = document.getElementById('successModal');
+                let successModal = bootstrap.Modal.getInstance(successModalEl);
+                successModal.hide();
+            });
+        }
     });
 });
 </script>
