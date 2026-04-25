@@ -1,5 +1,5 @@
     <?php
-    require_once "authorization.php";
+    
     $current = basename($_SERVER['PHP_SELF']);
     function active($page) {
         return $GLOBALS['current'] === $page ? 'active' : '';

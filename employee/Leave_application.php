@@ -10,15 +10,11 @@ function active($page) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Work Calendar</title>
+<title>Leave Application</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
-
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -30,6 +26,7 @@ body {
     background: rgba(173,216,230,0.85);
     min-height:100vh;
 }
+
 .wrapper{
     display:flex;
 }
@@ -89,62 +86,44 @@ body {
     color:#fff;
 }
 
+/* CONTENT */
 .content{
     margin-left:280px;
     padding:40px;
     width:100%;
 }
 
-.page-header{
-    background:white;
-    padding:20px 25px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom:25px;
+.page-title{
+    text-align:center;
+    font-weight:700;
+    color:#1f5fae;
+    margin-bottom:20px;
 }
 
-.page-header h3{
-    margin:0;
-    font-weight:600;
-}
-
-.calendar-card{
-    background:white;
+/* CARD LIKE IN IMAGE */
+.leave-card{
+    background:#e9ecef;
     border-radius:14px;
-    padding:20px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    padding:50px;
+    max-width:900px;
+    margin:0 auto;
+    box-shadow:0 6px 18px rgba(0,0,0,0.1);
+    text-align:center;
 }
 
-.fc-daygrid-day:hover{
-    background:#f3f7ff;
-    cursor:pointer;
-}
-
-.fc-event{
-    border:none;
-    padding:3px;
-    border-radius:6px;
-    transition:.2s;
-}
-
-.fc-event:hover{
-    transform:scale(1.05);
-}
-
-.modal-content{
-    border-radius:12px;
-}
-
-.modal-header{
-    background:#0d6efd;
+.btn-custom{
+    background:#2f66c7;
     color:white;
-    border-top-left-radius:12px;
-    border-top-right-radius:12px;
+    padding:12px 20px;
+    border-radius:8px;
+    margin:10px;
+    font-weight:500;
+    border:none;
+    transition:0.3s;
 }
 
-.btn-primary{
-    border-radius:8px;
-    padding:8px 18px;
+.btn-custom:hover{
+    background:#1d4ea3;
 }
 </style>
 </head>
@@ -153,21 +132,36 @@ body {
 <div class="overlay">
 <div class="wrapper">
 
+<!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar">
     <div class="sidebar-logo">
-    <img src="/assets/images/sannic.png">
-    <div>
-    <div class="logo-title">San Nicolas</div>
-    <div class="logo-sub">HR Management System</div>
+        <img src="/assets/images/sannic.png">
+        <div>
+            <div class="logo-title">San Nicolas</div>
+            <div class="logo-sub">HR Management System</div>
+        </div>
     </div>
+
+    <a href="dashboard.php" class="menu-item">📊 Dashboard</a>
+    <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
+    <a href="requests.php" class="menu-item">📝 Requests Application</a>
+    <a href="leave_application.php" class="menu-item active">📎 Leave Application</a>
+    <a href="performance.php" class="menu-item">📈 Performance</a>
 </div>
 
-<a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
-<a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-<a href="requests.php" class="menu-item">📝 Requests Application</a>
-<a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-<a href="performance.php" class="menu-item">📈 Performance</a>
+<!-- CONTENT -->
+<div class="content">
 
+    <h2 class="page-title">LEAVE APPLICATION</h2>
 
+    <div class="leave-card">
+        <button class="btn-custom">Fill Up Leave Application Form</button>
+        <button class="btn-custom">List of Approved/Disapproved Leave</button>
+    </div>
+
+</div>
+
+</div>
+</div>
 </body>
 </html>

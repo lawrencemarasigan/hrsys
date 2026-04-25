@@ -10,15 +10,11 @@ function active($page) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Work Calendar</title>
+<title>Employee Performance</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
-
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -30,6 +26,7 @@ body {
     background: rgba(173,216,230,0.85);
     min-height:100vh;
 }
+
 .wrapper{
     display:flex;
 }
@@ -89,62 +86,87 @@ body {
     color:#fff;
 }
 
+/* CONTENT */
 .content{
     margin-left:280px;
     padding:40px;
     width:100%;
 }
 
-.page-header{
-    background:white;
-    padding:20px 25px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom:25px;
+.page-title{
+    text-align:center;
+    font-weight:700;
+    color:#1f5fae;
+    margin-bottom:20px;
 }
 
-.page-header h3{
-    margin:0;
-    font-weight:600;
+/* SEARCH BAR */
+.search-bar{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:15px;
 }
 
-.calendar-card{
-    background:white;
-    border-radius:14px;
-    padding:20px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+.search-bar input{
+    border-radius:8px 0 0 8px;
+    border:1px solid #ccc;
+    padding:8px 12px;
+    width:180px;
 }
 
-.fc-daygrid-day:hover{
-    background:#f3f7ff;
-    cursor:pointer;
-}
-
-.fc-event{
+.search-bar button{
+    border-radius:0 8px 8px 0;
     border:none;
-    padding:3px;
-    border-radius:6px;
-    transition:.2s;
+    background:#e9ecef;
+    padding:8px 12px;
 }
 
-.fc-event:hover{
-    transform:scale(1.05);
+/* CARD */
+.performance-card{
+    background:#e9ecef;
+    border-radius:14px;
+    padding:30px;
+    max-width:950px;
+    margin:0 auto;
+    box-shadow:0 6px 18px rgba(0,0,0,0.1);
 }
 
-.modal-content{
-    border-radius:12px;
+/* PROFILE */
+.profile-box{
+    display:flex;
+    align-items:center;
+    gap:20px;
 }
 
-.modal-header{
-    background:#0d6efd;
+.profile-icon{
+    width:80px;
+    height:80px;
+    background:#2f66c7;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     color:white;
-    border-top-left-radius:12px;
-    border-top-right-radius:12px;
+    font-size:40px;
 }
 
-.btn-primary{
-    border-radius:8px;
-    padding:8px 18px;
+.profile-name{
+    font-size:20px;
+    font-weight:600;
+    color:#1f5fae;
+}
+
+.profile-sub{
+    font-size:16px;
+    color:#333;
+}
+
+/* RIGHT SIDE TEXT */
+.no-record{
+    text-align:center;
+    font-size:22px;
+    color:#1f5fae;
+    margin-top:30px;
 }
 </style>
 </head>
@@ -153,21 +175,62 @@ body {
 <div class="overlay">
 <div class="wrapper">
 
+<!-- SIDEBAR (UNCHANGED) -->
 <div class="sidebar">
     <div class="sidebar-logo">
-    <img src="/assets/images/sannic.png">
-    <div>
-    <div class="logo-title">San Nicolas</div>
-    <div class="logo-sub">HR Management System</div>
+        <img src="/assets/images/sannic.png">
+        <div>
+            <div class="logo-title">San Nicolas</div>
+            <div class="logo-sub">HR Management System</div>
+        </div>
     </div>
+
+    <a href="dashboard.php" class="menu-item">📊 Dashboard</a>
+    <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
+    <a href="requests.php" class="menu-item">📝 Requests Application</a>
+    <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
+    <a href="performance.php" class="menu-item active">📈 Performance</a>
 </div>
 
-<a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
-<a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-<a href="requests.php" class="menu-item">📝 Requests Application</a>
-<a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-<a href="performance.php" class="menu-item">📈 Performance</a>
+<!-- CONTENT -->
+<div class="content">
 
+    <h2 class="page-title">EMPLOYEE PERFORMANCE</h2>
 
+    <!-- SEARCH -->
+    <div class="search-bar">
+        <input type="text" placeholder="Select Year">
+        <button>🔍</button>
+    </div>
+
+    <!-- CARD -->
+    <div class="performance-card">
+
+        <div class="row">
+            <!-- LEFT PROFILE -->
+            <div class="col-md-6">
+                <div class="profile-box">
+                    <div class="profile-icon">👤</div>
+                    <div>
+                        <div class="profile-name">LAWRENCE</div>
+                        <div class="profile-sub">HEPHEP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT TEXT -->
+            <div class="col-md-6 text-center">
+                <h3>2023</h3>
+                <div class="no-record">No Record Found.</div>
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+</div>
 </body>
 </html>
