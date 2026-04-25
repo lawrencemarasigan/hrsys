@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2026 at 08:40 AM
+-- Generation Time: Feb 26, 2026 at 03:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,25 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `hrsys_db`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `adminaccount`
---
-
-CREATE TABLE `adminaccount` (
-  `id` int(11) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `adminaccount`
---
-
-INSERT INTO `adminaccount` (`id`, `email`, `password`) VALUES
-(1, 'itdepartment@gmail.com', '$2y$10$dmof3XovrQlWRMrh5yLc8.9PF0020x/JEiIEpBibP1uAayu8X9Lsa');
 
 -- --------------------------------------------------------
 
@@ -160,7 +141,7 @@ CREATE TABLE `requests` (
 --
 
 INSERT INTO `requests` (`request_no`, `employee_id`, `employee_name`, `department`, `position`, `request_type`, `status`) VALUES
-(1, 'EMP12345', 'John Doe', 'Human Resource', 'Employee', 'Print Employee Details', 'Pending');
+(1, 'EMP12345', 'John Doe', 'Human Resource', 'Employee', 'Print Employee Details', 'Approve');
 
 -- --------------------------------------------------------
 
@@ -186,12 +167,6 @@ INSERT INTO `users` (`id`, `email`, `password`, `fullname`, `created_at`) VALUES
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `adminaccount`
---
-ALTER TABLE `adminaccount`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `employees`
@@ -221,12 +196,6 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `adminaccount`
---
-ALTER TABLE `adminaccount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `employees`
