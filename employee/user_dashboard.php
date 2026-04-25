@@ -381,11 +381,9 @@
 
         <a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
         <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-        <a href="form201.php" class="menu-item">🗂️ Form 201</a>
-        <a href="requests.php" class="menu-item">📝 Requests</a>
+        <a href="requests.php" class="menu-item">📝 Requests Application</a>
         <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
         <a href="performance.php" class="menu-item">📈 Performance</a>
-        <a href="work_calendar.php" class="menu-item">📅 Calendar</a>
     </div>
     <!-- MAIN -->
     <div class="main">
@@ -510,7 +508,7 @@
             <button class="cal-btn" onclick="changeMonth(-1)">◀</button>
             <button class="cal-btn" onclick="changeMonth(1)">▶</button>
         </div>
-    
+
     </div>
     <table>
         <tr>
