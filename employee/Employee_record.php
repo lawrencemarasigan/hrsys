@@ -1,4 +1,5 @@
 <?php
+ require_once 'user_authorization.php';
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
 
 function active($page) {
@@ -136,11 +137,11 @@ body {
         </div>
     </div>
 
-    <a href="dashboard.php" class="menu-item">📊 Dashboard</a>
-    <a href="employee_records.php" class="menu-item active">👥 Employee Records</a>
-    <a href="requests.php" class="menu-item">📝 Requests Application</a>
+    <a href="user_dashboard.php" class="menu-item">📊 Dashboard</a>
+    <a href="employee_record.php" class="menu-item active">👥 Employee Records</a>
+    <a href="request_application.php" class="menu-item">📝 Requests Application</a>
     <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-    <a href="performance.php" class="menu-item">📈 Performance</a>
+    <a href="employee_performance.php" class="menu-item">📈 Performance</a>
 </div>
 
 <!-- CONTENT -->
@@ -181,11 +182,11 @@ body {
             <tbody>
                 <?php while($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?= $row['id'] ?></td>
-                    <td><?= $row['name'] ?></td>
+                    <td><?= $row['employee_id'] ?></td>
+                    <td><?= $row['employee_name'] ?></td>
                     <td><?= $row['department'] ?></td>
                     <td><?= $row['position'] ?></td>
-                    <td><?= $row['date_hired'] ?></td>
+                    <td><?= $row['hired_at'] ?></td>
                     <td>
                         <button class="btn-view">View</button>
                     </td>

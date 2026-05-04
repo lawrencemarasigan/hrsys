@@ -1,18 +1,50 @@
 <?php
+require_once 'user_authorization.php';
+
+$employee_id = $_SESSION['employee_id'];
+
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
 
-// Insert request
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $purpose = $_POST['purpose'];
-    $message = $_POST['message'];
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-    $stmt = $conn->prepare("INSERT INTO requests (purpose, message, status) VALUES (?, ?, 'Pending')");
-    $stmt->bind_param("ss", $purpose, $message);
+$userQuery = "SELECT employee_id, employee_name, department, position FROM employees WHERE employee_id = ?";
+$userStmt = $conn->prepare($userQuery);
+$userStmt->bind_param("i", $employee_id);
+$userStmt->execute();
+$userResult = $userStmt->get_result();
+$user = $userResult->fetch_assoc();
+
+$employee_name = $user['employee_name'] ?? '';
+$department    = $user['department'] ?? '';
+$position      = $user['position'] ?? '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $purpose = $_POST['request'];
+    $message = $_POST['purpose'];
+
+    $stmt = $conn->prepare("INSERT INTO requests 
+        (employee_id, employee_name, department, position, request_type, purpose, status) 
+        VALUES (?, ?, ?, ?, ?, ?, 'Pending')");
+
+    $stmt->bind_param("isssss",
+        $employee_id,
+        $employee_name,
+        $department,
+        $position,
+        $purpose,
+        $message
+    );
+
     $stmt->execute();
 }
 
-// Fetch requests
-$requests = $conn->query("SELECT * FROM requests ORDER BY id DESC");
+$stmt = $conn->prepare("SELECT * FROM requests WHERE employee_id = ? ORDER BY request_no DESC");
+$stmt->bind_param("i", $employee_id);
+$stmt->execute();
+$requests = $stmt->get_result();
 
 function active($page) {
     return basename($_SERVER['PHP_SELF']) === $page ? 'active' : '';
@@ -186,11 +218,11 @@ body {
         </div>
     </div>
 
-    <a href="dashboard.php" class="menu-item">📊 Dashboard</a>
-    <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-    <a href="requests.php" class="menu-item active">📝 Request Validation</a>
+    <a href="user_dashboard.php" class="menu-item">📊 Dashboard</a>
+    <a href="employee_record.php" class="menu-item">👥 Employee Records</a>
+    <a href="request_application.php" class="menu-item active">📝 Requests Application</a>
     <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-    <a href="performance.php" class="menu-item">📈 Performance</a>
+    <a href="employee_performance.php" class="menu-item">📈 Performance</a>
 </div>
 
 <!-- CONTENT -->
@@ -203,13 +235,13 @@ body {
         <!-- FORM -->
         <form method="POST">
             <div class="mb-3">
-                <label class="form-label">Purpose of Request</label>
-                <textarea name="purpose" class="form-control" placeholder="Enter your purpose..." required></textarea>
+                <label class="form-label">Request Type</label>
+                <textarea name="request" class="form-control" placeholder="Enter your purpose..." required></textarea>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Message to Admin</label>
-                <textarea name="message" class="form-control" placeholder="Enter your message..." required></textarea>
+                <label class="form-label">Purpose of Request</label>
+                <textarea name="purpose" class="form-control" placeholder="Enter your message..." required></textarea>
             </div>
 
             <div class="text-center mb-4">
@@ -222,6 +254,7 @@ body {
             <thead>
                 <tr>
                     <th>REQUEST NOTE</th>
+                    <th>PURPOSE</th>
                     <th>STATUS</th>
                 </tr>
             </thead>
@@ -229,6 +262,7 @@ body {
                 <?php if($requests->num_rows > 0): ?>
                     <?php while($row = $requests->fetch_assoc()): ?>
                     <tr>
+                        <td><?= htmlspecialchars($row['request_type']) ?></td>
                         <td><?= htmlspecialchars($row['purpose']) ?></td>
                         <td>
                             <span class="status <?= strtolower($row['status']) ?>">

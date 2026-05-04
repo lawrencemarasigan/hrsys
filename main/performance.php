@@ -9,22 +9,7 @@ function active($page) {
     return basename($_SERVER['PHP_SELF']) === $page ? 'active' : '';
 }
 
-$leave_query = "SELECT employee_id, employee_name, type_of_leave 
-FROM leave_application 
-WHERE status='Pending'";
 
-$leave_result = $conn->query($leave_query);
-
-$request_query = "SELECT employee_id, employee_name, request_type 
-FROM requests 
-WHERE status='Pending'";
-
-$request_result = $conn->query($request_query);
-
-$count_leave = $leave_result->num_rows;
-$count_request = $request_result->num_rows;
-
-$total_notifications = $count_leave + $count_request;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -110,40 +95,17 @@ body {
 }
 
 .performance-card {
-    background: #ffffff;
+    background: #e9e9e9;
     border-radius: 12px;
-    padding: 80px 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    text-align: center;
+    padding: 60px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
-.search-bar {
-    display: flex;
-    gap: 10px;
+.search-bar input,
+.search-bar select {
+    border-radius: 8px;
 }
 
-.notification-bell {
-    position: relative;
-    font-size: 22px;
-    cursor: pointer;
-}
-
-.notification-count {
-    position: absolute;
-    top: -6px;
-    right: -8px;
-    background: red;
-    color: white;
-    font-size: 12px;
-    padding: 3px 7px;
-    border-radius: 50%;
-}
-
-.dropdown-menu-notif {
-    width: 320px;
-    max-height: 350px;
-    overflow-y: auto;
-}
 </style>
 </head>
 
@@ -172,107 +134,59 @@ body {
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <div class="content">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold text-dark">Employee Performance</h3>
+</div>
+    <!-- TOP SEARCH BAR -->
+    <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
+    
+    <form method="GET" class="search-bar d-flex align-items-center" style="gap:10px;">
+        
+        <input type="text" name="search" class="form-control" 
+               placeholder="Search Employee" style="width:200px;">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+        <select name="year" class="form-select" style="width:150px;">
+            <option value="">Select Year</option>
+            <?php for($y = date('Y'); $y >= 2000; $y--): ?>
+                <option value="<?= $y ?>"><?= $y ?></option>
+            <?php endfor; ?>
+        </select>
 
-<h2 style="font-weight:bold; color:#1f4e79;">EMPLOYEE PERFORMANCE</h2>
+        <button class="btn btn-light" style="padding:8px 12px;">
+            🔍
+        </button>
 
-<div class="d-flex align-items-center gap-3">
+    </form>
 
-<div class="dropdown">
-    <div class="notification-bell" data-bs-toggle="dropdown">
-        🔔
-        <?php if($total_notifications > 0): ?>
-            <span class="notification-count"><?= $total_notifications ?></span>
-        <?php endif; ?>
+</div>
+
+    <!-- MAIN CARD -->
+    <div class="performance-card">
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+
+            <!-- LEFT TEXT -->
+            <div style="flex:1; text-align:left;">
+                <h3 style="color:#1c6fb7; font-weight:bold;">
+                    NO RESULTS FOUND.
+                </h3>
+            </div>
+
+            <!-- RIGHT FAKE TABLE LINES -->
+            <div style="flex:2;">
+                <?php for($i=0; $i<10; $i++): ?>
+                    <div style="height:12px; background:#ddd; margin:10px 0; border-radius:5px;"></div>
+                <?php endfor; ?>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="dropdown-menu dropdown-menu-end dropdown-menu-notif">
-
-        <h6 class="dropdown-header">Notifications</h6>
-
-        <?php while($row = $leave_result->fetch_assoc()): ?>
-            <a class="dropdown-item" href="leave_application.php">
-                📎 Leave request from <b><?= $row['employee_name'] ?></b>
-            </a>
-        <?php endwhile; ?>
-
-        <?php while($row = $request_result->fetch_assoc()): ?>
-            <a class="dropdown-item" href="requests.php">
-                📝 New request from <b><?= $row['employee_name'] ?></b>
-            </a>
-        <?php endwhile; ?>
-
-        <?php if($total_notifications == 0): ?>
-            <span class="dropdown-item text-muted">No new notifications</span>
-        <?php endif; ?>
-
-    </div>
 </div>
 
-<div class="search-bar">
-    <input type="text" class="form-control" placeholder="Search Employee">
-
-    <select class="form-select">
-        <option>Select Year</option>
-        <option>2023</option>
-        <option>2024</option>
-        <option>2025</option>
-    </select>
-
-    <button class="btn btn-light border">🔍</button>
-</div>
-
-</div>
-</div>
-
-<div class="performance-card">
-
-<?php
-$search = $_GET['search'] ?? '';
-$year = $_GET['year'] ?? '';
-
-$sql = "SELECT employee_id, name, department FROM employees WHERE 'Human Resource'";
-
-if($search != ''){
-    $sql .= " AND name LIKE '%$search%'";
-}
-
-$result = $conn->query($sql);
-?>
-
-<?php if($result && $result->num_rows > 0): ?>
-
-<table class="table table-striped">
-<thead>
-<tr>
-<th>Employee ID</th>
-<th>Name</th>
-<th>Department</th>
-</tr>
-</thead>
-<tbody>
-
-<?php while($row = $result->fetch_assoc()): ?>
-<tr>
-<td><?= $row['employee_id'] ?></td>
-<td><?= $row['name'] ?></td>
-<td><?= $row['department'] ?></td>
-</tr>
-<?php endwhile; ?>
-
-</tbody>
-</table>
-
-<?php else: ?>
-
-<h4 style="color:#2c5cc5; font-weight:bold;">NO RESULTS FOUND.</h4>
-
-<?php endif; ?>
-
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

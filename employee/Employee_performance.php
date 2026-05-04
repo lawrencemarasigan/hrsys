@@ -1,4 +1,5 @@
 <?php
+ require_once 'user_authorization.php';
 $conn = new mysqli("localhost", "root", "", "hrsys_db");
 
 function active($page) {
@@ -185,11 +186,11 @@ body {
         </div>
     </div>
 
-    <a href="dashboard.php" class="menu-item">📊 Dashboard</a>
-    <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-    <a href="requests.php" class="menu-item">📝 Requests Application</a>
+    <a href="user_dashboard.php" class="menu-item">📊 Dashboard</a>
+    <a href="employee_record.php" class="menu-item">👥 Employee Records</a>
+    <a href="request_application.php" class="menu-item">📝 Requests Application</a>
     <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-    <a href="performance.php" class="menu-item active">📈 Performance</a>
+    <a href="employee_performance.php" class="menu-item active">📈 Performance</a>
 </div>
 
 <!-- CONTENT -->
@@ -212,8 +213,8 @@ body {
                 <div class="profile-box">
                     <div class="profile-icon">👤</div>
                     <div>
-                        <div class="profile-name">LAWRENCE</div>
-                        <div class="profile-sub">HEPHEP</div>
+                        <div class="profile-name">NO USER</div>
+                        <div class="profile-sub">No USER</div>
                     </div>
                 </div>
             </div>

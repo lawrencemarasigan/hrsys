@@ -5,7 +5,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT id, name, department, position, hired_at FROM employees";
+$sql = "SELECT employee_id, employee_name, department, position, hired_at FROM employees";
 $result = $conn->query($sql);
 
 function active($page) {
@@ -243,19 +243,19 @@ body {
 
 <?php while ($row = $result->fetch_assoc()): ?>
     <tr>
-        <td><?php echo "Emp No." . str_pad($row['id'], 3, "0", STR_PAD_LEFT); ?></td>
-        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?php echo "Emp No." . str_pad($row['employee_id'], 3, "0", STR_PAD_LEFT); ?></td>
+        <td><?= htmlspecialchars($row['employee_name']) ?></td>
         <td><?= htmlspecialchars($row['department']) ?></td>
         <td><?= htmlspecialchars($row['position']) ?></td>
         <td><?= date("m-d-Y", strtotime($row['hired_at'])) ?></td>
     <td>
         <button class="btn btn-sm btn-view"
-            onclick="showViewEmployee(<?= $row['id'] ?>)">
+            onclick="showViewEmployee(<?= $row['employee_id'] ?>)">
             View
         </button>
 
         <button class="btn btn-sm btn-print"
-            onclick="printEmployee(<?= $row['id']; ?>)">
+            onclick="printEmployee(<?= $row['employee_id']; ?>)">
             Print
         </button>
 

@@ -10,11 +10,28 @@
         die("Connection failed: " . $conn->connect_error);
     }
 
+    $leave_query = "SELECT employee_id, employee_name, type_of_leave 
+    FROM leave_application 
+    WHERE status='Pending'";
+
+    $leave_result = $conn->query($leave_query);
+
+    $request_query = "SELECT employee_id, employee_name, request_type 
+    FROM requests 
+    WHERE status='Pending'";
+
+    $request_result = $conn->query($request_query);
+
+    $count_leave = $leave_result->num_rows;
+    $count_request = $request_result->num_rows;
+
+    $total_notifications = $count_leave + $count_request;
+
     $selectedDept = isset($_GET['department']) ? $_GET['department'] : '';
 
     $deptQuery = $conn->query("SELECT DISTINCT department FROM employees");
 
-    $sql = "SELECT name, department, position, employee_status FROM employees";
+    $sql = "SELECT employee_name, department, position, employee_status FROM employees";
 
     if (!empty($selectedDept)) {
         $sql .= " WHERE department = ?";
@@ -362,6 +379,29 @@
     select{
         padding:6px;
     }
+
+    .notification-bell {
+    position: relative;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.notification-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 50%;
+}
+
+.dropdown-menu-notif {
+    width: 320px;
+    max-height: 350px;
+    overflow-y: auto;
+}
     </style>
     </head>
     <!----- HTML ----->
@@ -396,7 +436,38 @@
         </div>
 
         <div class="topbar-right">
+                    <div class="dropdown">
+            <div class="notification-bell" data-bs-toggle="dropdown">
+                🔔
+                <?php if($total_notifications > 0): ?>
+                    <span class="notification-count"><?= $total_notifications ?></span>
+                <?php endif; ?>
+            </div>
+
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-notif">
+
+                <h6 class="dropdown-header">Notifications</h6>
+
+                <?php while($row = $leave_result->fetch_assoc()): ?>
+                    <a class="dropdown-item" href="leave_application.php">
+                        📎 Leave request from <b><?= $row['employee_name'] ?></b>
+                    </a>
+                <?php endwhile; ?>
+
+                <?php while($row = $request_result->fetch_assoc()): ?>
+                    <a class="dropdown-item" href="requests.php">
+                        📝 New request from <b><?= $row['employee_name'] ?></b>
+                    </a>
+                <?php endwhile; ?>
+
+                <?php if($total_notifications == 0): ?>
+                    <span class="dropdown-item text-muted">No new notifications</span>
+                <?php endif; ?>
+
+            </div>
+        </div>
             <div class="dropdown">
+                
         <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
             👤 Admin
         </button>
@@ -488,7 +559,7 @@
 
     <?php while($row = $result->fetch_assoc()): ?>
     <tr>
-        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?= htmlspecialchars($row['employee_name']) ?></td>
         <td><?= htmlspecialchars($row['department']) ?></td>
         <td><?= htmlspecialchars($row['position']) ?></td>
         <td><?= htmlspecialchars($row['employee_status']) ?></td>

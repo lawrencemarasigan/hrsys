@@ -1,5 +1,6 @@
     <?php
-    
+    require_once 'user_authorization.php';
+
     $current = basename($_SERVER['PHP_SELF']);
     function active($page) {
         return $GLOBALS['current'] === $page ? 'active' : '';
@@ -14,7 +15,7 @@
 
     $deptQuery = $conn->query("SELECT DISTINCT department FROM employees");
 
-    $sql = "SELECT name, department, position, employee_status FROM employees";
+    $sql = "SELECT employee_name, department, position, employee_status FROM employees";
 
     if (!empty($selectedDept)) {
         $sql .= " WHERE department = ?";
@@ -379,11 +380,11 @@
             </div>
         </div>
 
-        <a href="dashboard.php" class="menu-item active">📊 Dashboard</a>
-        <a href="employee_records.php" class="menu-item">👥 Employee Records</a>
-        <a href="requests.php" class="menu-item">📝 Requests Application</a>
+        <a href="user_dashboard.php" class="menu-item active">📊 Dashboard</a>
+        <a href="employee_record.php" class="menu-item">👥 Employee Records</a>
+        <a href="request_application.php" class="menu-item">📝 Requests Application</a>
         <a href="leave_application.php" class="menu-item">📎 Leave Application</a>
-        <a href="performance.php" class="menu-item">📈 Performance</a>
+        <a href="employee_performance.php" class="menu-item">📈 Performance</a>
     </div>
     <!-- MAIN -->
     <div class="main">
@@ -401,7 +402,7 @@
 
         <ul class="dropdown-menu dropdown-menu-end">
             <li>
-                <a class="dropdown-item" href="admin_profile.php">
+                <a class="dropdown-item" href="user_profile.php">
                     👤 Profile
                 </a>
             </li>
@@ -486,7 +487,7 @@
 
     <?php while($row = $result->fetch_assoc()): ?>
     <tr>
-        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?= htmlspecialchars($row['employee_name']) ?></td>
         <td><?= htmlspecialchars($row['department']) ?></td>
         <td><?= htmlspecialchars($row['position']) ?></td>
         <td><?= htmlspecialchars($row['employee_status']) ?></td>
@@ -538,7 +539,7 @@
 
         <div class="modal-footer">
             <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <a href="logout.php" class="btn btn-danger">Logout</a>
+            <a href="user_logout.php" class="btn btn-danger">Logout</a>
         </div>
 
         </div>
